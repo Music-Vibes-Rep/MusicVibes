@@ -4,7 +4,7 @@ var mysql = require('mysql2');
 var conn = mysql.createConnection({
     host : 'localhost',
     database : 'MusicVibes',
-    user :  'root',
+    user :  'admin',
     password : '1234'
 
 });
@@ -16,15 +16,18 @@ conn.connect((error) => {
         return;
     }
         console.log("Conexion creada exitosamente!");
-    
+            /*
         conn.end((error) => {
             if (error){
                 console.log("Error al cerrar la base de datos");
                 return;
             }
+            */
             //borrar cuando se use porque sino se cerrara siempre
-            console.log("Conexion cerrada con exito");
-        });
+            //console.log("Conexion cerrada con exito");
+       // });
 
 
 });
+
+module.exports = conn;
