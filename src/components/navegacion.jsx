@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +13,7 @@ function Navbar() {
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
         <div className="text-xl font-bold">
-          MusicVibes
+          <img src="./assets" alt="MusicVibe logo" />
         </div>
 
         {/* Menú hamburguesa (para móvil) */}
@@ -30,7 +31,7 @@ function Navbar() {
           <a href="#explore" className="hover:text-blue-500">Explore</a>
           <a href="#about" className="hover:text-blue-500">About</a>
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Sign In
+            <a href="/login">login</a>
           </button>
         </div>
       </div>
