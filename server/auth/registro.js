@@ -1,8 +1,8 @@
 //importar conexion 
-var mysql = require('mysql2');
+
 const express = require('express');
 const conn = require('../db/conection');
-const usuario = require('../objetosBD'); 
+const usuario = require('../db/objetosBD'); 
 const app = express();
 const PORT = 8080;
 //guardar datos base de datos
