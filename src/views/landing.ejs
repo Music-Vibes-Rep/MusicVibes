@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MusicVibe</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+</head>
+
+<body class="bg-white">
+  <header class="absolute inset-x-0 top-0 z-50">
+    <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+      <div class="flex lg:flex-1">
+        <a href="#" class="-m-1.5 p-1.5">
+          <span class="sr-only">MusicVibe</span>
+          <img class="h-8 w-auto" src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="Logo">
+        </a>
+      </div>
+      <div class="flex lg:hidden">
+        <button type="button" class="p-2.5 text-gray-700 rounded-md">
+          <span class="sr-only">Abrir menú</span>
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+          </svg>
+        </button>
+      </div>
+      <div class="hidden lg:flex lg:gap-x-12">
+        <a href="#" class="text-sm font-semibold text-gray-900">Explore</a>
+        <a href="#" class="text-sm font-semibold text-gray-900">Events</a>
+        <a href="#" class="text-sm font-semibold text-gray-900">Sida</a>
+        <a href="#" class="text-sm font-semibold text-gray-900">Hola</a>
+      </div>
+      <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+        <a href="#" class="text-sm font-semibold text-gray-900">Log in →</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="relative isolate px-6 pt-24 lg:px-8">
+
+    <!-- Contenido principal -->
+    <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56 text-center">
+      <h1 class="text-5xl sm:text-7xl font-semibold tracking-tight text-gray-900">My Vibe My Music</h1>
+      <p class="mt-8 text-lg sm:text-xl text-gray-500">Un lugar para compartir tu pasión por la música.</p>
+      <div class="mt-10 flex justify-center gap-x-6">
+        <a href="#" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Regístrate</a>
+        <a href="#" class="text-sm font-semibold text-gray-900">Más info →</a>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
