@@ -5,6 +5,8 @@ const app = express();
 
 // Configurar motor de plantillas EJS
 app.set('view engine', 'ejs');
+
+// Configurar la carpeta de vistas y archivos estáticos
 app.set('views', path.join(__dirname, 'views'));  // Definir dónde están las vistas
 app.use(express.static(path.join(__dirname, 'public')));  // Servir archivos estáticos desde la carpeta `public`
 

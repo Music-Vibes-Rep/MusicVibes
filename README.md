@@ -1,70 +1,87 @@
-# Getting Started with Create React App
+# 🎵 **MusicVibe** 🎶
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**MusicVibe** es una red social enfocada en la música donde los usuarios pueden compartir sus gustos musicales, interactuar con otros, y descubrir nueva música. Este proyecto está en fase inicial de desarrollo. 🚀
 
-## Available Scripts
+<p align="center">
+  <img src="src/public/assets/img/LogoFullNoBGW.png" alt="Descripción de la imagen" width="300"/>
+</p>
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🗂 **Estructura del Proyecto**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+El proyecto está estructurado siguiendo el patrón **MVC** (Modelo-Vista-Controlador), usando **Node.js**, **Express**, **EJS**, y **TailwindCSS** para el diseño.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🛠 **Tecnologías Usadas**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Node.js**: 🟢 Entorno de ejecución para JavaScript del lado del servidor.
+- **Express**: 🚀 Framework para Node.js que facilita la creación de servidores.
+- **EJS**: 📄 Motor de plantillas que genera HTML dinámico.
+- **TailwindCSS**: 🎨 Framework de CSS para un diseño responsivo y moderno.
+- **MySQL2**: 🗄 Base de datos relacional para almacenar los datos de los usuarios.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📋 **Instalación**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 🚀 **Prerrequisitos**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Node.js y npm**: Si no tienes Node.js, puedes descargarlo [aquí](https://nodejs.org/).
+2. **Base de datos MySQL**: Asegúrate de tener MySQL instalado y configurado en tu máquina si estás usando este gestor de bases de datos.
 
-### `npm run eject`
+### ⚙️ **Pasos para instalar**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Clona el repositorio:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   git clone https://github.com/Music-Vibes-Rep/MusicVibes.git
+   cd MusicVibes
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. Instala las dependencias:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. Ejecuta el servidor:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   ```bash
+   node server.js
+   ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+4. Abre tu navegador y accede a [http://localhost:8081](http://localhost:8081) para ver la aplicación en acción.
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🔍 **Estructura del Código**
 
-### Analyzing the Bundle Size
+### `server.js`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Este archivo es el encargado de configurar y arrancar el servidor Express. Aquí se definen las rutas principales y la configuración básica del servidor.
 
-### Making a Progressive Web App
+### `app.js`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+En `app.js` se configura el middleware, las rutas y la conexión a la base de datos. Este archivo es importado por `server.js` para organizar el código.
 
-### Advanced Configuration
+### `views/`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+La carpeta `views/` contiene las plantillas **EJS** que generan HTML dinámico, permitiendo que la información de los usuarios se presente de manera personalizada.
 
-### Deployment
+### `controllers/`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Los controladores contienen la lógica que se ejecuta cuando se llama a una ruta. Se encargan de procesar los datos, interactuar con la base de datos y pasar la información a las vistas.
 
-### `npm run build` fails to minify
+### `models/`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Los modelos interactúan directamente con la base de datos. Contienen funciones para realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los datos.
+
+### `public/`
+
+Aquí se encuentran los archivos estáticos (CSS, imágenes, JavaScript) que son referenciados en las vistas **EJS**. Esta carpeta es accesible para el navegador.
+
+---
+
+¡Gracias por tu interés en **MusicVibe**!
