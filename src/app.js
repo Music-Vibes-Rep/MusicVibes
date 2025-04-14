@@ -18,4 +18,25 @@ app.get('/', (req, res) => {
   res.render('landing'); // Renderiza la vista `landing.ejs`
 });
 
+// Login
+app.get('/login', (req, res) => {
+  res.render('sign', { isRegister: false }); // Cambiado a sign.ejs y añadido isRegister
+});
+
+// Registro
+app.get('/registro', (req, res) => {
+  res.render('sign', { isRegister: true }); // Usar misma plantilla con variable diferente
+});
+
+// Manejo de envío de formularios
+// Agrega estas rutas GET
+app.get('/login', (req, res) => {
+  res.render('sign', { isRegister: false });
+});
+
+app.get('/registro', (req, res) => {
+  res.render('sign', { isRegister: true });
+});
+
+
 module.exports = app;
