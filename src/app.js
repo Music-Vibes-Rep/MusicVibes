@@ -34,9 +34,10 @@ app.get('/login', (req, res) => {
   res.render('sign', { isRegister: false });
 });
 
-app.get('/registro', (req, res) => {
-  res.render('sign', { isRegister: true });
+app.get('/register', (req, res) => {
+  res.render('register'); 
 });
+
 
 
 module.exports = app;
