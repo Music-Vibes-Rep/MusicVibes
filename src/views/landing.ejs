@@ -1,126 +1,120 @@
 <!DOCTYPE html>
-<html lang="es" class="transition-colors duration-300 dark">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MusicVibe</title>
-  <link rel="icon" href="/img/IconNoBGW.png" type="image/png">
+  <link rel="icon" href="assets/img/IconNoBGW.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script>
     function toggleMenu() {
       document.getElementById('mobile-menu').classList.toggle('hidden');
     }
-
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-    }
   </script>
-  <style>
-    body {
-      background: linear-gradient(135deg, #fda4af, #ffffff, #fbcfe8);
-    }
-    .dark body {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-    }
-  </style>
 </head>
 
-<body class="text-gray-900 dark:text-gray-100 min-h-screen">
+<body class="text-gray-900 min-h-screen">
   <!-- Navbar -->
-  <header class="bg-white dark:bg-gray-950 shadow-md fixed top-0 inset-x-0 z-50 bg-opacity-90">
+  <header class="bg-white opacity-75  backdrop-blur-md fixed top-0 inset-x-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
       <a href="/" class="flex items-center space-x-2">
-        <img src="/img/IconNoBGW.png" alt="Logo" class="h-16 w-16">
+        <img src="assets/img/IconNoBGB.png" alt="Logo" class="h-20 w-20">
       </a>
-      <div class="hidden lg:flex space-x-6 text-sm font-medium">
-        <a href="#" class="hover:text-red-600 dark:hover:text-pink-400 transition">Inicio</a>
-        <a href="#" class="hover:text-red-600 dark:hover:text-pink-400 transition">Explorar</a>
-        <a href="#" class="hover:text-red-600 dark:hover:text-pink-400 transition">Eventos</a>
+      <div class="hidden lg:flex space-x-6 text-sm font-medium text-gray-900">
+        <a href="#" class="hover:text-red-600 transition">Inicio</a>
+        <a href="#" class="hover:text-red-600 transition">Explorar</a>
+        <a href="#" class="hover:text-red-600 transition">Eventos</a>
       </div>
       <div class="hidden lg:flex space-x-4 items-center">
         <a href="/login" class="bg-red-600 hover:bg-pink-700 text-white font-semibold px-4 py-2 rounded-md transition">Accede</a>
-        <button onclick="toggleDarkMode()" class="text-sm px-3 py-1 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-800 transition">🌙</button>
       </div>
       <button class="lg:hidden p-2" onclick="toggleMenu()">
-        <svg class="h-6 w-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
     </div>
-    <div id="mobile-menu" class="lg:hidden hidden px-4 pt-2 pb-4 space-y-2 bg-white dark:bg-gray-950 shadow">
+    <div id="mobile-menu" class="lg:hidden hidden px-4 pt-2 pb-4 space-y-2 bg-white/95 backdrop-blur-md border-t border-white/30">
       <a href="#" class="block">Inicio</a>
       <a href="#" class="block">Explorar</a>
       <a href="#" class="block">Eventos</a>
       <a href="/login" class="block bg-red-600 text-white px-3 py-1 rounded">Accede</a>
-      <button onclick="toggleDarkMode()" class="block w-full text-left text-sm px-3 py-1 rounded border mt-2 dark:border-gray-600">🌙 Modo oscuro</button>
     </div>
   </header>
+  
+  
 
-  <!-- Hero -->
-  <section class="pt-24 px-6 bg-gradient-to-r from-red-600 to-pink-700 text-white dark:from-gray-800 dark:to-gray-700 min-h-[85vh] flex flex-col items-center justify-center text-center">
-    <h1 class="text-5xl md:text-7xl font-extrabold mb-6">My Vibe My Music</h1>
-    <p class="text-lg md:text-2xl mb-8">Un lugar donde la pasión por la música se encuentra</p>
-    <a href="#" class="bg-white text-red-600 dark:bg-pink-600 dark:text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-gray-100 dark:hover:bg-pink-500 transition">Regístrate</a>
-  </section>
+  <!-- Contenido principal con fondo degradado -->
+  <main class="pt-24 bg-gradient-to-r from-red-600 to-pink-700 text-white">
+    <!-- Hero -->
+    <section class="px-6 min-h-screen flex flex-col items-center justify-center text-center">
+      <h1 class="text-5xl md:text-7xl font-extrabold mb-6">My Vibe My Music</h1>
+      <p class="text-lg md:text-2xl mb-8">Un lugar donde la pasión por la música se encuentra</p>
+      <a href="/registro" class="bg-white text-red-600 font-semibold px-6 py-3 rounded-md shadow hover:bg-gray-100 transition">Regístrate</a>
+    </section>
 
-  <!-- ¿Qué es MusicVibe? -->
-  <section class="py-16 text-center px-4 max-w-3xl mx-auto bg-transparent dark:bg-gray-800">
-    <h2 class="text-3xl font-bold mb-4">¿Qué es MusicVibe?</h2>
-    <p class="text-gray-700 dark:text-gray-300 text-lg">Una comunidad donde puedes descubrir nuevos talentos, compartir tu música y asistir a eventos únicos creados por y para amantes del ritmo.</p>
-  </section>
+    <!-- ¿Qué es MusicVibe? -->
+    <section class="py-16 text-center px-4 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold mb-4 text-white">¿Qué es MusicVibe?</h2>
+      <p class="text-white text-lg">Una comunidad donde puedes descubrir nuevos talentos, compartir tu música y asistir a eventos únicos creados por y para amantes del ritmo.</p>
+    </section>
 
-  <!-- Recomendaciones -->
-  <section class="py-16 px-4 bg-transparent dark:bg-gray-900">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-2xl font-bold text-center mb-10">Te recomendamos...</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        <% for(let i = 1; i <= 4; i++) { %>
-          <div class="bg-white dark:bg-gray-700 rounded-lg p-4 shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
-            <div class="bg-red-600 dark:bg-pink-600 h-32 rounded mb-4 flex items-center justify-center text-white font-bold text-lg">
-              Imagen <%= i %>
+    
+
+    <!-- Recomendaciones -->
+    <section class="py-16 px-4">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-2xl font-bold text-center mb-10 text-white">Te recomendamos...</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <% for(let i = 1; i <= 4; i++) { %>
+            <div class="bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+              <div class="bg-red-600 h-32 rounded mb-4 flex items-center justify-center text-white font-bold text-lg">
+                Imagen <%= i %>
+              </div>
+              <h3 class="text-center font-semibold text-pink-700">Músico <%= i %></h3>
             </div>
-            <h3 class="text-center font-semibold text-pink-700 dark:text-pink-400">Músico <%= i %></h3>
-          </div>
-        <% } %>
+          <% } %>
+        </div>
+        <div class="text-center mt-6">
+          <a href="#" class="inline-block bg-white text-red-600 px-4 py-2 rounded transition hover:bg-gray-100 font-semibold">Ver más</a>
+        </div>
       </div>
-      <div class="text-center mt-6">
-        <a href="#" class="inline-block bg-pink-700 hover:bg-red-600 text-white px-4 py-2 rounded transition">Ver más</a>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Eventos destacados -->
-  <section class="py-16 px-4 bg-transparent dark:bg-gray-800">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-2xl font-bold text-center mb-10">Eventos destacados</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <% for(let i = 0; i < 6; i++) { %>
-          <div class="bg-pink-700 dark:bg-pink-600 h-40 rounded-xl shadow-lg flex items-center justify-center text-white font-semibold text-lg">
-            Evento <%= i+1 %>
-          </div>
-        <% } %>
+    <!-- Eventos destacados -->
+    <section class="py-16 px-4">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-2xl font-bold text-center mb-10 text-white">Eventos destacados</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <% for(let i = 0; i < 8; i++) { %>
+            <div class="bg-white text-red-600 h-40 rounded-xl shadow-lg flex items-center justify-center font-semibold text-lg">
+              Evento <%= i+1 %>
+            </div>
+          <% } %>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Únete -->
-  <section class="py-16 px-4 text-center bg-transparent dark:bg-gray-900">
-    <h2 class="text-2xl font-bold mb-6">Únete a nosotros</h2>
-    <a href="#" class="inline-block bg-red-600 hover:bg-pink-700 text-white px-6 py-3 rounded-md font-semibold shadow transition">¡Unirse!</a>
-  </section>
+    <!-- Únete -->
+    <section class="py-16 px-4 text-center">
+      <h2 class="text-2xl font-bold mb-6 text-white">Únete a nosotros</h2>
+      <a href="/login" class="inline-block bg-white text-red-600 px-6 py-3 rounded-md font-semibold shadow transition hover:bg-gray-100">¡Unirse!</a>
+    </section>
 
-  <!-- Footer -->
-  <footer class="bg-white dark:bg-gray-950 border-t py-6 px-4">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center">
-      <div class="text-sm text-gray-600 dark:text-gray-400">© 2025 MusicVibe. Todos los derechos reservados.</div>
-      <div class="flex space-x-4 mt-4 sm:mt-0">
-        <a href="#" class="text-pink-700 dark:text-pink-400 hover:underline">Instagram</a>
-        <a href="#" class="text-pink-700 dark:text-pink-400 hover:underline">Twitter</a>
-        <a href="#" class="text-pink-700 dark:text-pink-400 hover:underline">Términos</a>
+    <!-- Footer -->
+    <footer class="py-6 px-4">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center text-white">
+        <div class="text-sm">© 2025 MusicVibe. Todos los derechos reservados.</div>
+        <div class="flex space-x-4 mt-4 sm:mt-0">
+          <a href="#" class="hover:underline">Instagram</a>
+          <a href="#" class="hover:underline">Twitter</a>
+          <a href="#" class="hover:underline">Términos</a>
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+  </main>
 </body>
+
 
 </html>
