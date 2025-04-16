@@ -20,7 +20,7 @@ app.get('/login', (req, res) => {
 });
 
 // Página de registro
-app.get('/register', (req, res) => {
+app.get('/registro', (req, res) => {
   res.render('sign', { isRegister: true });
 });
 
