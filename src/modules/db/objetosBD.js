@@ -89,7 +89,7 @@ const tipo_instrumento = {
   id_tipo_instrumento: null,
   nombre: ""
 };
-
+/*
 module.exports = usuario;
 module.exports = instrumento;
 module.exports = tipo_instrumento;
@@ -101,5 +101,20 @@ module.exports = provincia;
 module.exports = like_publicacion;
 module.exports = follow;
 module.exports = publicacion;
+*/
+
+module.exports = {
+  usuario,
+  publicacion,
+  follow,
+  provincia,
+  comentario,
+  genero_musical,
+  instrumento,
+  like_publicacion,
+  usuario_genero,
+  usuario_instrumento,
+  tipo_instrumento
+};
 
 //linea 100, me hacia ilu :D
