@@ -1,0 +1,26 @@
+<header class="bg-white opacity-75  backdrop-blur-md fixed top-0 inset-x-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <a href="/" class="flex items-center space-x-2">
+        <img src="assets/img/IconNoBGB.png" alt="Logo" class="h-20 w-20">
+      </a>
+      <div class="hidden lg:flex space-x-6 text-sm font-medium text-gray-900">
+        <a href="#" class="hover:text-red-600 transition">Inicio</a>
+        <a href="#" class="hover:text-red-600 transition">Explorar</a>
+        <a href="#" class="hover:text-red-600 transition">Eventos</a>
+      </div>
+      <div class="hidden lg:flex space-x-4 items-center">
+        <a href="/login" class="bg-red-600 hover:bg-pink-700 text-white font-semibold px-4 py-2 rounded-md transition">Accede</a>
+      </div>
+      <button class="lg:hidden p-2" onclick="toggleMenu()">
+        <svg class="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="lg:hidden hidden px-4 pt-2 pb-4 space-y-2 bg-white/95 backdrop-blur-md border-t border-white/30">
+      <a href="#" class="block">Inicio</a>
+      <a href="#" class="block">Explorar</a>
+      <a href="#" class="block">Eventos</a>
+      <a href="/login" class="block bg-red-600 text-white px-3 py-1 rounded">Accede</a>
+    </div>
+</header>
