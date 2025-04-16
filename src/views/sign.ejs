@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Iniciar sesión - MusicVibe</title>
+  <title><%= isRegister ? 'Registrarse' : 'Iniciar sesión' %> - MusicVibe</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     body {
@@ -19,9 +19,19 @@
 
 <body class="min-h-screen flex items-center justify-center text-gray-900 dark:text-gray-100 px-4">
   <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-8">
-    <h2 class="text-3xl font-extrabold text-center text-pink-700 dark:text-pink-400 mb-6">Iniciar sesión</h2>
+    <h2 class="text-3xl font-extrabold text-center text-pink-700 dark:text-pink-400 mb-6">
+      <%= isRegister ? 'Crear cuenta' : 'Iniciar sesión' %>
+    </h2>
 
-    <form class="space-y-5">
+    <form class="space-y-5" method="POST" action="<%= isRegister ? '/register' : '/login' %>">
+      <% if (isRegister) { %>
+        <div>
+          <label for="username" class="block mb-1 font-medium">Nombre de usuario</label>
+          <input type="text" id="username" name="username" placeholder="Tu nombre"
+            class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:bg-gray-800" required>
+        </div>
+      <% } %>
+
       <div>
         <label for="email" class="block mb-1 font-medium">Correo electrónico</label>
         <input type="email" id="email" name="email" placeholder="correo@ejemplo.com"
@@ -34,15 +44,28 @@
           class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:bg-gray-800" required>
       </div>
 
+      <% if (isRegister) { %>
+        <div>
+          <label for="confirm-password" class="block mb-1 font-medium">Confirmar contraseña</label>
+          <input type="password" id="confirm-password" name="confirm-password" placeholder="••••••••"
+            class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500 dark:bg-gray-800" required>
+        </div>
+      <% } %>
+
       <button type="submit"
         class="w-full bg-pink-700 hover:bg-red-600 text-white font-semibold py-2 rounded-md transition shadow-md">
-        Iniciar sesión
+        <%= isRegister ? 'Registrarse' : 'Iniciar sesión' %>
       </button>
     </form>
 
     <p class="text-sm text-center mt-6 text-gray-600 dark:text-gray-400">
-      ¿No tienes cuenta?
-      <a href="/registro" class="text-pink-700 dark:text-pink-400 hover:underline font-medium">Regístrate</a>
+      <% if (isRegister) { %>
+        ¿Ya tienes cuenta?
+        <a href="/login" class="text-pink-700 dark:text-pink-400 hover:underline font-medium">Inicia sesión</a>
+      <% } else { %>
+        ¿No tienes cuenta?
+        <a href="/register" class="text-pink-700 dark:text-pink-400 hover:underline font-medium">Regístrate</a>
+      <% } %>
     </p>
   </div>
 </body>
