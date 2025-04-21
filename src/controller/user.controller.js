@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const UserModel = require('../modules/auth/registro');
 const { usuario: usuarioPlantilla } = require('../modules/db/objetosBD');
+const db = require('../modules/db/conection');
 
 exports.getRegister = (req, res) => {
   res.render('register');
@@ -37,4 +38,34 @@ exports.registrarUsuario = async (req, res) => {
   } catch (err) {
     res.status(500).send('Error interno del servidor');
   }
+};
+
+exports.loginUsuario = (req, res) => {
+  const { email, password } = req.body;
+
+  const sql = 'SELECT * FROM Usuario WHERE email = ? LIMIT 1';
+  db.query(sql, [email], async (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(401).send('Usuario no encontrado');
+    }
+
+    const usuario = results[0];
+    const match = await bcrypt.compare(password, usuario.password);
+
+    if (!match) {
+      return res.status(401).send('Contraseña incorrecta');
+    }
+
+    req.session.usuarioId = usuario.id_usuario;
+    req.session.usuario = {
+      nombre: usuario.nombre
+    };
+    res.redirect('/');
+  });
+};
+
+exports.logoutUsuario = (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
 };
