@@ -14,18 +14,9 @@ app.get('/', (req, res) => {
   res.render('landing');
 });
 
-//pagina de login
-app.get('/login', (req, res) => {
-  res.render('sign', { isRegister: false });
-});
-
 //rutas
 const userRoutes = require('./routes/user.routes');
 app.use('/', userRoutes);
 
-//pagina de registro
-app.get('/registro', (req, res) => {
-  res.render('sign', { isRegister: true });
-});
 
 module.exports = app;

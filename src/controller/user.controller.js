@@ -2,6 +2,17 @@ const bcrypt = require('bcrypt');
 const UserModel = require('../modules/auth/registro');
 const { usuario: usuarioPlantilla } = require('../modules/db/objetosBD');
 
+// Vista de registro
+exports.getRegister = (req, res) => {
+  res.render('register');
+};
+
+// Vista de login
+exports.getLogin = (req, res) => {
+  res.render('login');
+};
+
+// Registro de usuario
 exports.registrarUsuario = async (req, res) => {
   const { nombre, email, apellido, password, es_musico } = req.body;
 
@@ -16,19 +27,10 @@ exports.registrarUsuario = async (req, res) => {
     usuario.es_musico = es_musico;
 
     UserModel.create(usuario, (err) => {
-      if (err) {
-        console.error('Error al guardar:', err.message);
-        return res.status(500).send('Error al guardar');
-      }
-
-      res.send('Datos guardados con éxito');
+      if (err) return res.status(500).send('Error al guardar');
+      res.redirect('/login');
     });
   } catch (err) {
-    console.error('Error en registro:', err.message);
     res.status(500).send('Error interno del servidor');
   }
 };
-exports.getRegister = (req, res) => {
-    res.render('sign', { isRegister: true });
-  };
-  
