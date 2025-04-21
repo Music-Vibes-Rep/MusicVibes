@@ -1,0 +1,9 @@
+
+{
+  "watch": ["src"],
+  "ext": "js,ejs",
+  "ignore": [".png", ".jpg", "src/public/", "src/assets/"],
+  "exec": "node src/server.js"
+}
+
+
