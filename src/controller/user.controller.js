@@ -2,19 +2,23 @@ const bcrypt = require('bcrypt');
 const UserModel = require('../modules/auth/registro');
 const { usuario: usuarioPlantilla } = require('../modules/db/objetosBD');
 
-// Vista de registro
 exports.getRegister = (req, res) => {
   res.render('register');
 };
 
-// Vista de login
 exports.getLogin = (req, res) => {
   res.render('login');
 };
 
-// Registro de usuario
 exports.registrarUsuario = async (req, res) => {
-  const { nombre, email, apellido, password, es_musico } = req.body;
+  const { nombre, email, apellido, password } = req.body;
+  let es_musico = req.body.es_musico;
+
+  if (Array.isArray(es_musico)) {
+    es_musico = es_musico.includes('1') ? 1 : 0;
+  } else {
+    es_musico = parseInt(es_musico) || 0;
+  }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
