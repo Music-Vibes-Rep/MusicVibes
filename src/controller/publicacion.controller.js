@@ -1,17 +1,24 @@
 const bcrypt = require('bcrypt');
-const { publicacion: publicacionPlantilla, publicacion } = require('../modules/db/objetosBD');
+const { publicacion: publicacionPlantilla} = require('../modules/db/objetosBD');
 const db = require('../modules/db/conection');
-
+const guardar = "INSERT INTO Publicacion (contenido, foto, id_usuario) VALUES (?, ?, ?)";
 //este registra el usuario
-exports.getRegister = (req, res) => {
-  res.render('publicacion');
+exports.getRegisterPublicacion = (req, res) => {
+  if (!req.session.id_usuario) return res.redirect('/login');
+  res.render('publicacion', { id_usuario: req.session.id_usuario});
+
+  //res.render('publicacion');
 };
+
 /*
 //aqui guardara el usuario login
 exports.getLogin = (req, res) => {
   res.render('login');
 };
 */
+
+//aqui guardaremos la publicacion 
+
 exports.registrarPublicacion = async (req, res) => {
   const { contenido, foto, id_usuario } = req.body;
 /*
@@ -22,22 +29,32 @@ exports.registrarPublicacion = async (req, res) => {
   }
 */
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    //const hashedPassword = await bcrypt.hash(password, 10);
 
     const publicacion = { ...publicacionPlantilla };
     publicacion.contenido = contenido;
     publicacion.foto = foto;
     publicacion.id_usuario = id_usuario;
 
-    UserModel.create(publicacion, (err) => {
-      if (err) return res.status(500).send('Error al guardar');
-      res.redirect('/login');
+    db.query(guardar, [publicacion.contenido, publicacion.foto, publicacion.id_usuario], (err) =>{
+      if (err) {
+        console.error('Error para guardar', err.message);
+        return res.status(500).send('Error al guardar publicacion');
+      }
+      res.redirect('/');
     });
+ 
   } catch (err) {
     res.status(500).send('Error interno del servidor');
   }
 };
-
+/*
+UserModel.create(publicacion, (err) => {
+  if (err) return res.status(500).send('Error al guardar');
+  res.redirect('/');
+});
+*/
+/*
 exports.loginUsuario = (req, res) => {
   const { email, password } = req.body;
 
@@ -67,3 +84,4 @@ exports.logoutUsuario = (req, res) => {
     res.redirect('/');
   });
 };
+*/

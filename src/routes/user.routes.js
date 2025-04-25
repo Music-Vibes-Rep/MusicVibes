@@ -14,8 +14,8 @@ router.post('/login', userController.loginUsuario);
 
 router.post('/logout', userController.logoutUsuario);
 
-router.get('/publicacion', publicacionController.getRegister);
-router.post('/publicacion', publicacionController.registrarPublicacion);
+router.get('/publicar', publicacionController.getRegisterPublicacion);
+router.post('/publicar', publicacionController.registrarPublicacion);
 
 
 module.exports = router;

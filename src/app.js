@@ -26,5 +26,7 @@ app.get('/', (req, res) => {
 const userRoutes = require('./routes/user.routes');
 app.use('/', userRoutes);
 
+const publicacionRoutes = require('./routes/publicacion.routes');
+app.use('/', publicacionRoutesRoutes);
 
 module.exports = app;
