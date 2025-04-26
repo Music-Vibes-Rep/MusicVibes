@@ -3,15 +3,19 @@ const UserModel = require('../modules/auth/registro');
 const { usuario: usuarioPlantilla } = require('../modules/db/objetosBD');
 const db = require('../modules/db/conection');
 
-//este registra el usuario
+// Renderizar formulario de registro
 exports.getRegister = (req, res) => {
+  if (req.session.usuario) return res.redirect('/');
   res.render('register');
 };
-//aqui guardara el usuario login
+
+// Renderizar formulario de login
 exports.getLogin = (req, res) => {
-  res.render('login', {isRegister: true});
+  if (req.session.usuario) return res.redirect('/');
+  res.render('login', { isRegister: false });
 };
 
+// Guardar un nuevo usuario
 exports.registrarUsuario = async (req, res) => {
   const { nombre, email, apellido, password } = req.body;
   let es_musico = req.body.es_musico;
@@ -41,6 +45,7 @@ exports.registrarUsuario = async (req, res) => {
   }
 };
 
+// Login de usuario
 exports.loginUsuario = (req, res) => {
   const { email, password } = req.body;
 
@@ -57,14 +62,20 @@ exports.loginUsuario = (req, res) => {
       return res.status(401).send('Contraseña incorrecta');
     }
 
-    req.session.usuarioId = usuario.id_usuario;
+    // Guardar datos en la sesión
     req.session.usuario = {
-      nombre: usuario.nombre
+      id: usuario.id_usuario,
+      nombre: usuario.Nombre,
+      apellido: usuario.Apellido,
+      email: usuario.email,
+      es_musico: usuario.es_musico
     };
+    
     res.redirect('/');
   });
 };
 
+// Logout de usuario
 exports.logoutUsuario = (req, res) => {
   req.session.destroy(() => {
     res.redirect('/');
