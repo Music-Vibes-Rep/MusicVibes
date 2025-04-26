@@ -4,8 +4,9 @@ const db = require('../modules/db/conection');
 const guardar = "INSERT INTO Publicacion (contenido, foto, id_usuario) VALUES (?, ?, ?)";
 //este registra el usuario
 exports.getRegisterPublicacion = (req, res) => {
-  if (!req.session.id_usuario) return res.redirect('/login');
-  res.render('publicacion', { id_usuario: req.session.id_usuario});
+  if (!req.session.usuario || !req.session.usuario.id) return res.redirect('/login');
+res.render('publicacion', { id_usuario: req.session.usuario.id });
+
 
   //res.render('publicacion');
 };

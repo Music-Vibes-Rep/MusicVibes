@@ -29,8 +29,7 @@ app.get('/', (req, res) => {
 const userRoutes = require('./routes/user.routes');
 app.use('/', userRoutes);
 
-/*
-const publicacionRoutes = require('./routes/publicacion.routes');
+const publicacionRoutes = require('./routes/publicaciones.routes');
 app.use('/', publicacionRoutes);
-*/
+
 module.exports = app;
