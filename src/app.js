@@ -6,7 +6,12 @@ const app = express();
 // Configurar motor de plantillas EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Middleware para archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public/assets/img/publicaciones', express.static('public/assets/img/publicaciones'));
+
+// Middleware para parsear datos del body
 app.use(express.urlencoded({ extended: true }));
 
 // Configurar sesiones

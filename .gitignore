@@ -1,51 +1,18 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# Archivos del sistema operativo
-.DS_Store
-Thumbs.db
-
-# Dependencias de Node.js
+# Node modules
 node_modules/
 
-# Archivos de configuración local
+# Entornos y logs
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+*.log
 
-# Archivos de registro y depuración
+# Directorios de uploads (fotos de publicaciones)
+public/assets/publicaciones/
+
+# Configs editoriales
+.vscode/
+.idea/
+
+# Otros (opcional)
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-*.log
-
-# Carpetas de compilación y distribución
-build/
-dist/
-
-# Archivos temporales
-tmp/
-temp/
-
-# Carpetas de caché
-.cache/
-.parcel-cache/
-
-# Archivos de entorno virtual (si usas uno)
-.venv/
-venv/
-
-# Archivos de configuración del IDE (opcional)
-.idea/         # IntelliJ IDEA
-.vscode/       # Visual Studio Code
-
-# Otros archivos y carpetas que quieras ignorar
-# Ejemplo: si tienes carpetas de imágenes grandes que no quieres subir
-# /public/images/large_images/
-
-# Archivos de reporte de pruebas
-coverage/
-
-# Archivos específicos de Tailwind CSS
-.tailwindcss/
