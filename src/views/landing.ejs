@@ -31,7 +31,7 @@
         <div class="hidden lg:flex items-center space-x-4">
           <% if (usuario) { %>
             <span class="text-sm font-semibold text-gray-900 bg-pink-100 px-4 py-2 rounded-full shadow">
-              <%= usuario.nombre %>
+              Bienvenido, <%= usuario.nombre %><%= usuario.apellido %>
             </span>
             <form action="/logout" method="POST">
               <button type="submit" class="text-sm font-semibold text-red-600 hover:text-red-800 transition">Cerrar sesión</button>
@@ -57,7 +57,7 @@
       <a href="#" class="block">Eventos</a>
       <% if (usuario) { %>
         <div class="pt-4 border-t border-gray-200">
-          <p class="text-sm font-semibold text-gray-900 mb-2">Bienvenido, <%= usuario.nombre %></p>
+          <p class="text-sm font-semibold text-gray-900 mb-2">Bienvenido, <%= usuario.nombre %><%= usuario.apellido %></p>
           <form action="/logout" method="POST">
             <button type="submit" class="w-full text-left text-sm font-semibold text-red-600 hover:text-red-800 transition">Cerrar sesión</button>
           </form>
@@ -97,21 +97,28 @@
     <section class="py-16 px-4">
       <div class="max-w-6xl mx-auto">
         <h2 class="text-2xl font-bold text-center mb-10 text-white">Te recomendamos...</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          <% for(let i = 1; i <= 4; i++) { %>
-            <div class="bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
-              <div class="bg-red-600 h-32 rounded mb-4 flex items-center justify-center text-white font-bold text-lg">
-                Imagen <%= i %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <% publicaciones.forEach(publi => { %>
+            <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition transform hover:-translate-y-1 overflow-hidden">
+              <% if (publi.foto) { %>
+                <img src="<%= publi.foto %>" alt="Publicación" class="w-full h-60 object-cover">
+              <% } else { %>
+                <div class="bg-gray-300 w-full h-60 flex items-center justify-center text-gray-500">
+                  Sin imagen
+                </div>
+              <% } %>
+              <div class="p-4">
+                <h3 class="text-center font-semibold text-pink-700 break-words"><%= publi.contenido %></h3>
               </div>
-              <h3 class="text-center font-semibold text-pink-700">Músico <%= i %></h3>
             </div>
-          <% } %>
+          <% }); %>
         </div>
         <div class="text-center mt-6">
           <a href="#" class="inline-block bg-white text-red-600 px-4 py-2 rounded transition hover:bg-gray-100 font-semibold">Ver más</a>
         </div>
       </div>
     </section>
+    
 
     <!-- Eventos destacados -->
     <section class="py-16 px-4">

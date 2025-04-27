@@ -6,7 +6,7 @@ node_modules/
 *.log
 
 # Directorios de uploads (fotos de publicaciones)
-public/assets/publicaciones/
+src/public/assets/publicaciones/
 
 # Configs editoriales
 .vscode/

@@ -2,7 +2,6 @@
 {
   "watch": ["src"],
   "ext": "js,ejs",
-  "ignore": ["src/public/", "src/assets/"],
   "exec": "node src/server.js"
 }
 

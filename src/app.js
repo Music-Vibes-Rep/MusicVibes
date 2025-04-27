@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const app = express();
+const db = require('./modules/db/conection');
 
 // Configurar motor de plantillas EJS
 app.set('view engine', 'ejs');
@@ -9,7 +10,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Middleware para archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/public/assets/img/publicaciones', express.static('public/assets/img/publicaciones'));
+app.use('/assets/publicaciones', express.static(path.join(__dirname, 'public/assets/publicaciones')));
 
 // Middleware para parsear datos del body
 app.use(express.urlencoded({ extended: true }));
@@ -27,7 +28,15 @@ app.use(session({
 
 // Página principal
 app.get('/', (req, res) => {
-  res.render('landing', { usuario: req.session.usuario });
+  const sql = 'SELECT * FROM Publicacion ORDER BY RAND() LIMIT 4';
+
+  db.query(sql, (err, publicaciones) => {
+    if (err) {
+      console.error('Error al obtener publicaciones:', err.message);
+      publicaciones = [];
+    }
+    res.render('landing', { usuario: req.session.usuario, publicaciones });
+  });
 });
 
 // Rutas

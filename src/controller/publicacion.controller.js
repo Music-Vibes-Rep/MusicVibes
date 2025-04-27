@@ -16,7 +16,7 @@ exports.registrarPublicacion = async (req, res) => {
 
   const { contenido } = req.body;
   const id_usuario = req.session.usuario.id;
-  const imagen = req.file ? `/public/assets/publicaciones/${req.file.filename}` : null;
+  const imagen = req.file ? `/assets/publicaciones/${req.file.filename}` : null;
 
   try {
     const publicacion = { ...publicacionPlantilla };
