@@ -8,6 +8,12 @@
   <link rel="icon" href="assets/img/IconNoBGW.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script>
+    function toggleMenu() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+
+    }
+
+    // Función para alternar el menú desplegable
     function toggleDropdown() {
       const menu = document.getElementById('dropdown-menu');
       const arrow = document.getElementById('arrow-icon');
@@ -84,7 +90,13 @@
       <a href="#" class="block">Eventos</a>
       <% if (usuario) { %>
         <div class="pt-4 border-t border-gray-200">
-          <p class="text-sm font-semibold text-gray-900 mb-2">Bienvenido, <%= usuario.nombre %><%= usuario.apellido %></p>
+          <img src="<%= usuario.fotoPerfil || '/assets/img/default-avatar.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
+
+          <div class="px-4 py-2 text-sm text-gray-700">
+            <span class="font-semibold"><%= usuario.nombre %> <%= usuario.apellido %></span>
+          </div>
+          <a href="/perfil" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Perfil</a>
+
           <form action="/logout" method="POST">
             <button type="submit" class="w-full text-left text-sm font-semibold text-red-600 hover:text-red-800 transition">Cerrar sesión</button>
           </form>

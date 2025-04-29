@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const UserModel = require('../modules/auth/registro');
-const { usuario: usuarioPlantilla } = require('../modules/db/objetosBD');
+const { usuario: usuarioPlantilla, publicacion } = require('../modules/db/objetosBD');
 const db = require('../modules/db/conection');
 
 // Renderizar formulario de registro
@@ -13,6 +13,22 @@ exports.getRegister = (req, res) => {
 exports.getLogin = (req, res) => {
   if (req.session.usuario) return res.redirect('/');
   res.render('login', { isRegister: false });
+};
+
+// Mostrar perfil de usuario
+exports.getProfile = (req, res) => {
+  // Si no está logueado, redirigir al login
+  if (!req.session.usuario) {
+    return res.redirect('/login');
+  }
+
+  const usuario = req.session.usuario;
+
+  const publicacion = [];
+  const eventos = [];  
+
+  // Renderizamos el perfil
+  res.render('perfil', { usuario, publicacion, eventos });
 };
 
 // Guardar un nuevo usuario

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Dashboard - MusicVibe</title>
+  <script>
+    function cambiarTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-white', 'text-pink-600', 'border-t', 'border-l', 'border-r', 'rounded-t-md'));
+      document.getElementById('btn-' + tabId).classList.add('bg-white', 'text-pink-600', 'border-t', 'border-l', 'border-r', 'rounded-t-md');
+    }
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen p-6">
+  
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Tabs estilo navegador -->
+    <div class="flex space-x-2 border-b border-gray-300">
+      <button id="btn-tab-perfil" class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-pink-600" onclick="cambiarTab('tab-perfil')">Perfil</button>
+      <button id="btn-tab-publicaciones" class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-pink-600" onclick="cambiarTab('tab-publicaciones')">Publicaciones</button>
+      <button id="btn-tab-eventos" class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 hover:text-pink-600" onclick="cambiarTab('tab-eventos')">Eventos</button>
+      <a href="/logout" class="ml-auto px-4 py-2 text-sm text-red-500 hover:underline">Cerrar sesión</a>
+    </div>
+
+    <!-- Contenido: PERFIL -->
+    <div id="tab-perfil" class="tab-content bg-white p-10 rounded-b-xl shadow-md mt-0">
+      <div class="flex flex-col md:flex-row gap-10 justify-center items-center">
+        <img src="<%= usuario.foto_perfil || '/default-profile.png' %>" alt="Foto de perfil" class="w-40 h-40 rounded-full border-4 border-pink-400 object-cover">
+        <div class="text-center md:text-left">
+          <h2 class="text-3xl font-bold text-gray-800"><%= usuario.nombre %> <%= usuario.apellido %></h2>
+          <p class="mt-2 text-gray-500"><%= usuario.descripcion || 'Aún no has escrito una descripción' %></p>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8 mt-10">
+        <div class="bg-pink-50 p-6 rounded-lg">
+          <h3 class="font-semibold text-pink-600">Destacados</h3>
+          <p class="text-gray-600 mt-2">Aquí podrías poner una publicación destacada, foto o enlace.</p>
+        </div>
+        <div class="bg-pink-50 p-6 rounded-lg">
+          <h3 class="font-semibold text-pink-600">Intereses</h3>
+          <p class="text-gray-600 mt-2">Guitarra, rock, metal, lo que quieras compartir.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido: PUBLICACIONES -->
+    <div id="tab-publicaciones" class="tab-content hidden bg-white p-6 rounded-b-xl shadow-md">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">Mis publicaciones</h2>
+        <a href="/publicar" class="bg-green-200 text-green-800 px-3 py-1 rounded hover:bg-green-300">Publicar</a>
+      </div>
+
+      <!-- Publicaciones -->
+      <% if (publicacion && publicacion.length > 0) { %>
+        <% publicacion.forEach(publi => { %>
+          <div class="flex items-start gap-4 border rounded-lg p-4 mb-4 bg-gray-50">
+            <% if (publi.foto) { %>
+              <img src="<%= publi.foto %>" alt="Imagen" class="w-16 h-16 object-cover rounded">
+            <% } %>
+            <div class="flex-1">
+              <h3 class="font-semibold text-gray-800"><%= publi.titulo %></h3>
+              <p class="text-gray-600"><%= publi.contenido %></p>
+            </div>
+            <form action="/publicaciones/<%= publi.id %>/delete" method="POST">
+              <button class="text-red-400 hover:text-red-600 text-xl">&times;</button>
+            </form>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="text-gray-500">Aún no tienes publicaciones.</p>
+      <% } %>
+    </div>
+
+    <!-- Contenido: EVENTOS -->
+    <div id="tab-eventos" class="tab-content hidden bg-white p-6 rounded-b-xl shadow-md">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Tus eventos</h2>
+      <% if (eventos && eventos.length > 0) { %>
+        <ul class="space-y-3">
+          <% eventos.forEach(evento => { %>
+            <li class="p-4 border rounded-lg bg-indigo-50">
+              <div class="flex justify-between">
+                <span class="font-semibold text-indigo-700"><%= evento.nombre %></span>
+                <span class="text-sm text-gray-500"><%= evento.fecha %></span>
+              </div>
+              <p class="text-gray-600 mt-1"><%= evento.descripcion %></p>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p class="text-gray-500">No tienes eventos programados.</p>
+      <% } %>
+    </div>
+
+  </div>
+
+  <!-- Activar tab inicial -->
+  <script>cambiarTab('tab-perfil');</script>
+</body>
+
+</html>
