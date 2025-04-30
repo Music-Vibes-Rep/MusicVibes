@@ -54,12 +54,12 @@
     <div id="tab-publicaciones" class="tab-content hidden bg-white p-6 rounded-b-xl shadow-md">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-gray-800">Mis publicaciones</h2>
-        <a href="/publicar" class="bg-green-200 text-green-800 px-3 py-1 rounded hover:bg-green-300">Publicar</a>
+        <a href="/publicacion" class="bg-green-200 text-green-800 px-3 py-1 rounded hover:bg-green-300">Publicar</a>
       </div>
 
       <!-- Publicaciones -->
-      <% if (publicacion && publicacion.length > 0) { %>
-        <% publicacion.forEach(publi => { %>
+      <% if (publicaciones && publicaciones.length > 0) { %>
+        <% publicaciones.forEach(publi => { %>
           <div class="flex items-start gap-4 border rounded-lg p-4 mb-4 bg-gray-50">
             <% if (publi.foto) { %>
               <img src="<%= publi.foto %>" alt="Imagen" class="w-16 h-16 object-cover rounded">
