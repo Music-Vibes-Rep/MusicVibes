@@ -9,6 +9,11 @@ exports.getRegister = (req, res) => {
   res.render('register');
 };
 
+// Renderizar politica de privacidad
+exports.getPrivacity = (req, res) => {
+  res.render('privacity');
+};
+
 // Renderizar formulario de login
 exports.getLogin = (req, res) => {
   if (req.session.usuario) return res.redirect('/');
