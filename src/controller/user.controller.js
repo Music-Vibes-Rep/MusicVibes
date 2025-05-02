@@ -9,10 +9,12 @@ exports.getRegister = (req, res) => {
   res.render('register');
 };
 
+// Feed de publicaciones
+router.get('/feed', userController.getFeed);
+
 // Renderizar politica de privacidad
 exports.getPrivacidad = (req, res) => {
   const usuario = req.session.usuario || null;
-
   res.render('privacity', { usuario });
 };
 

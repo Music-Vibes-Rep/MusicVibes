@@ -16,9 +16,10 @@ router.get('/logout', userController.logoutUsuario);
 // Perfil
 router.get('/perfil', userController.getProfile);
 
-// privacidad
+// Privacidad
 router.get('/privacity', userController.getPrivacidad);
 
+// Feed
+router.get('/feed', userController.getFeed);
 
 module.exports = router;
-
