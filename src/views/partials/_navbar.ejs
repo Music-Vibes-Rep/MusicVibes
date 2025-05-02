@@ -14,7 +14,7 @@
         <% if (usuario) { %>
           <div class="relative">
             <button onclick="toggleDropdown()" class="flex items-center space-x-2 focus:outline-none">
-              <img src="<%= usuario.foto_perfil || '/assets/img/default-avatar.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
+              <img src="<%= usuario.foto_perfil || 'assets/img/default-profile.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
               <svg id="arrow-icon" class="w-4 h-4 text-gray-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
@@ -23,7 +23,7 @@
               <div class="px-4 py-2 text-sm text-gray-700">
                 <span class="font-semibold"><%= usuario.nombre %> <%= usuario.apellido %></span>
               </div>
-              <a href="/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Perfil</a>
+              <a href="/perfil" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Perfil</a>
               <form action="/logout" method="POST" class="block">
                 <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Cerrar sesión</button>
               </form>
@@ -48,11 +48,11 @@
     <a href="#" class="block">Eventos</a>
     <% if (usuario) { %>
       <div class="pt-4 border-t border-gray-200">
-        <img src="<%= usuario.foto_perfil || '/assets/img/default-avatar.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
+        <img src="<%= usuario.foto_perfil || 'assets/img/default-profile.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
         <div class="px-4 py-2 text-sm text-gray-700">
           <span class="font-semibold"><%= usuario.nombre %> <%= usuario.apellido %></span>
         </div>
-        <a href="/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Perfil</a>
+        <a href="/perfil" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Perfil</a>
         <form action="/logout" method="POST">
           <button type="submit" class="w-full text-left text-sm font-semibold text-red-600 hover:text-red-800 transition">Cerrar sesión</button>
         </form>

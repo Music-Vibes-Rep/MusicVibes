@@ -31,12 +31,16 @@ exports.getProfile = (req, res) => {
   }
 
   const usuario = req.session.usuario;
+  const sql = 'SELECT * FROM Publicacion WHERE id_usuario = ? ORDER BY fecha_publicacion DESC';
+  db.query(sql, [usuario.id], (err, publicaciones) => {
+    if (err) {
+      console.error('Error al obtener publicaciones:', err.message);
+      return res.status(500).send('Error interno del servidor');
+    }
 
-  const publicacion = [];
-  const eventos = [];  
-
-  // Renderizamos el perfil
-  res.render('perfil', { usuario, publicacion, eventos });
+    // Renderizar el perfil con las publicaciones
+    res.render('perfil', { usuario, publicacion: publicaciones });
+  });
 };
 
 // Guardar un nuevo usuario

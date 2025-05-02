@@ -51,7 +51,7 @@
           <% if (usuario) { %>
             <div class="relative">
               <button onclick="toggleDropdown()" class="flex items-center space-x-2 focus:outline-none">
-                <img src="<%= usuario.fotoPerfil || '/assets/img/default-avatar.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
+                <img src="<%= usuario.fotoPerfil || 'assets/img/default-profile.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
                 <svg id="arrow-icon" class="w-4 h-4 text-gray-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
