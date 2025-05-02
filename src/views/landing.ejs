@@ -7,109 +7,11 @@
   <title>MusicVibe</title>
   <link rel="icon" href="assets/img/IconNoBGW.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script>
-    function toggleMenu() {
-      document.getElementById('mobile-menu').classList.toggle('hidden');
-
-    }
-
-    // Función para alternar el menú desplegable
-    function toggleDropdown() {
-      const menu = document.getElementById('dropdown-menu');
-      const arrow = document.getElementById('arrow-icon');
-      menu.classList.toggle('hidden');
-      arrow.classList.toggle('rotate-180');
-    }
-  
-    // Cierra el menú si haces click fuera
-    document.addEventListener('click', function(e) {
-      const menu = document.getElementById('dropdown-menu');
-      const button = e.target.closest('button[onclick="toggleDropdown()"]');
-      if (!button && !e.target.closest('#dropdown-menu')) {
-        menu.classList.add('hidden');
-        document.getElementById('arrow-icon').classList.remove('rotate-180');
-      }
-    });
-  </script>
 </head>
 
 <body class="text-gray-900 min-h-screen">
   <!-- Navbar -->
-  <header class="bg-white opacity-75  backdrop-blur-md fixed top-0 inset-x-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-      <div class="flex items-center space-x-2 justify-between w-full">
-        <a href="/" class="flex items-center">
-          <img src="assets/img/IconNoBGB.png" alt="Logo" class="h-16 w-16">
-        </a>
-        <div class="hidden lg:flex space-x-6 text-sm font-medium text-gray-900">
-          <a href="/" class="hover:text-red-600 transition">Inicio</a>
-          <a href="#" class="hover:text-red-600 transition">Explorar</a>
-          <a href="#" class="hover:text-red-600 transition">Eventos</a>
-          <a href="/publicacion" class="hover:text-red-600 transition">Publicar</a>
-        </div>
-        <div class="hidden lg:flex items-center space-x-4 relative">
-          <% if (usuario) { %>
-            <div class="relative">
-              <button onclick="toggleDropdown()" class="flex items-center space-x-2 focus:outline-none">
-                <img src="<%= usuario.fotoPerfil || 'assets/img/default-profile.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
-                <svg id="arrow-icon" class="w-4 h-4 text-gray-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-        
-              <!-- Dropdown -->
-              <div id="dropdown-menu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden z-50">
-                <div class="px-4 py-2 text-sm text-gray-700">
-                  <span class="font-semibold"><%= usuario.nombre %> <%= usuario.apellido %></span>
-                </div>
-                <a href="/perfil" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Perfil</a>
-                <form action="/logout" method="POST" class="block">
-                  <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Cerrar sesión</button>
-                </form>
-              </div>
-            </div>
-          <% } else { %>
-            <a href="/login" class="bg-red-600 hover:bg-pink-700 text-white font-semibold px-4 py-2 rounded-md transition">Accede</a>
-          <% } %>
-        </div>
-              
-      </div>
-  
-      
-  
-      <button class="lg:hidden p-2" onclick="toggleMenu()">
-        <svg class="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-    </div>
-  
-    <div id="mobile-menu" class="lg:hidden hidden px-4 pt-2 pb-4 space-y-2 bg-white/95 backdrop-blur-md border-t border-white/30">
-      <a href="#" class="block">Inicio</a>
-      <a href="#" class="block">Explorar</a>
-      <a href="#" class="block">Eventos</a>
-      <% if (usuario) { %>
-        <div class="pt-4 border-t border-gray-200">
-          <img src="<%= usuario.fotoPerfil || '/assets/img/default-avatar.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
-
-          <div class="px-4 py-2 text-sm text-gray-700">
-            <span class="font-semibold"><%= usuario.nombre %> <%= usuario.apellido %></span>
-          </div>
-          <a href="/perfil" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Perfil</a>
-
-          <form action="/logout" method="POST">
-            <button type="submit" class="w-full text-left text-sm font-semibold text-red-600 hover:text-red-800 transition">Cerrar sesión</button>
-          </form>
-        </div>
-      <% } else { %>
-        <a href="/login" class="block bg-red-600 text-white px-3 py-1 rounded">Accede</a>
-      <% } %>
-    </div>
-  </header>
-  
-  
-  
-  
+  <%- include('partials/_navbar') %>
 
   <!-- Contenido principal con fondo degradado -->
   <main class="pt-24 bg-gradient-to-r from-red-600 to-pink-700 text-white">

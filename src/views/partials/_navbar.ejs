@@ -6,9 +6,8 @@
       </a>
       <div class="hidden lg:flex space-x-6 text-sm font-medium text-gray-900">
         <a href="/" class="hover:text-red-600 transition">Inicio</a>
-        <a href="#" class="hover:text-red-600 transition">Explorar</a>
+        <a href="/feed" class="hover:text-red-600 transition">Feed</a>
         <a href="#" class="hover:text-red-600 transition">Eventos</a>
-        <a href="/publicacion" class="hover:text-red-600 transition">Publicar</a>
       </div>
       <div class="hidden lg:flex items-center space-x-4 relative">
         <% if (usuario) { %>
@@ -43,8 +42,8 @@
   </div>
 
   <div id="mobile-menu" class="lg:hidden hidden px-4 pt-2 pb-4 space-y-2 bg-white/95 backdrop-blur-md border-t border-white/30">
-    <a href="#" class="block">Inicio</a>
-    <a href="#" class="block">Explorar</a>
+    <a href="/" class="block">Inicio</a>
+    <a href="/feed" class="block">Feed</a>
     <a href="#" class="block">Eventos</a>
     <% if (usuario) { %>
       <div class="pt-4 border-t border-gray-200">
