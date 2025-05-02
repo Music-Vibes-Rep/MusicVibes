@@ -10,9 +10,12 @@ exports.getRegister = (req, res) => {
 };
 
 // Renderizar politica de privacidad
-exports.getPrivacity = (req, res) => {
-  res.render('privacity');
+exports.getPrivacidad = (req, res) => {
+  const usuario = req.session.usuario || null;
+
+  res.render('privacity', { usuario });
 };
+
 
 // Renderizar formulario de login
 exports.getLogin = (req, res) => {
