@@ -19,7 +19,4 @@ router.get('/perfil', userController.getProfile);
 // Privacidad
 router.get('/privacity', userController.getPrivacidad);
 
-// Feed
-router.get('/feed', userController.getFeed);
-
 module.exports = router;

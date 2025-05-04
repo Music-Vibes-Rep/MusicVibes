@@ -4,125 +4,75 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Feed - MusicVibe</title>
-  <link rel="icon" href="/assets/img/IconNoBGW.png" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gradient-to-r from-red-600 to-pink-700 min-h-screen text-white pt-24">
+  <style>
+    .main-wrapper {
+      margin-top: 80px;
+    }
 
-  <header class="bg-white opacity-75 backdrop-blur-md fixed top-0 inset-x-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-      <div class="flex items-center space-x-2 justify-between w-full">
-        <a href="/" class="flex items-center">
-          <img src="/assets/img/IconNoBGB.png" alt="Logo" class="h-16 w-16">
-        </a>
-        <div class="hidden lg:flex space-x-6 text-sm font-medium text-gray-900">
-          <a href="/" class="hover:text-red-600 transition">Inicio</a>
-          <a href="#" class="hover:text-red-600 transition">Explorar</a>
-          <a href="#" class="hover:text-red-600 transition">Eventos</a>
-          <a href="/publicacion" class="hover:text-red-600 transition">Publicar</a>
+    input[type="search"]::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+    }
+  </style>
+</head>
+<body class="text-white bg-gradient-to-r from-red-600 to-pink-700 min-h-screen">
+  <%- include('partials/_navbar') %>
+
+  <main class="main-wrapper container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <!-- Centro (barra + publicaciones) -->
+    <section class="md:col-span-2 space-y-6">
+
+      <!-- Barra de búsqueda + botón -->
+      <div class="bg-white text-gray-800 rounded-xl shadow px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex-1">
+          <input type="search" placeholder="Busca..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
         </div>
-        <div class="hidden lg:flex items-center space-x-4">
-          <% if (usuario) { %>
-            <img src="<%= usuario.fotoPerfil || '/assets/img/default-profile.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
-          <% } else { %>
-            <a href="/login" class="bg-red-600 hover:bg-pink-700 text-white font-semibold px-4 py-2 rounded-md transition">Accede</a>
-          <% } %>
+        <div class="flex-shrink-0">
+          <a href="/publicar" class="inline-block mt-2 sm:mt-0 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold px-4 py-2 rounded-md shadow">
+            Express your vibe
+          </a>
         </div>
       </div>
-      <button class="lg:hidden p-2" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
-        <svg class="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-    </div>
-    <div id="mobile-menu" class="lg:hidden hidden px-4 pt-2 pb-4 space-y-2 bg-white/95 backdrop-blur-md border-t border-white/30">
-      <a href="/" class="block">Inicio</a>
-      <a href="#" class="block">Explorar</a>
-      <a href="#" class="block">Eventos</a>
-      <% if (usuario) { %>
-        <a href="/perfil" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">Perfil</a>
-        <form action="/logout" method="POST">
-          <button type="submit" class="w-full text-left text-sm font-semibold text-red-600 hover:text-red-800">Cerrar sesión</button>
-        </form>
-      <% } else { %>
-        <a href="/login" class="block bg-red-600 text-white px-3 py-1 rounded">Accede</a>
-      <% } %>
-    </div>
-  </header>
 
-  <main class="px-4 max-w-6xl mx-auto py-12">
-    <h1 class="text-3xl font-bold mb-8 text-center">Últimas publicaciones</h1>
-    <div id="feedContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-    <div class="text-center mt-8">
-      <button id="loadMoreBtn" class="bg-white text-red-600 px-6 py-2 rounded-md font-semibold shadow hover:bg-gray-100 transition">Ver más</button>
-    </div>
+      <!-- Publicaciones -->
+      <% publicaciones.forEach(pub => { %>
+        <article class="bg-white text-gray-900 rounded-xl shadow-md p-4 border-l-4 border-pink-400">
+          <div class="flex items-center space-x-3 mb-3">
+            <img src="<%= pub.foto_perfil || 'assets/img/default-profile.png' %>" alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-pink-300">
+            <div>
+              <h3 class="text-red-700 font-semibold text-sm"><%= pub.nombre_usuario %></h3>
+              <p class="text-xs text-gray-500"><%= new Date(pub.fecha_publicacion).toLocaleDateString() %></p>
+            </div>
+          </div>
+
+          <% if (pub.foto) { %>
+            <img src="<%= pub.foto %>" alt="Imagen de publicación" class="w-full rounded-md mb-3 object-contain max-h-[600px] border border-gray-200" />
+          <% } %>
+
+          <p class="text-gray-800 text-sm whitespace-pre-line"><%= pub.contenido %></p>
+
+          <div class="mt-4 border-t pt-2 text-right">
+            <button class="text-pink-600 hover:underline text-sm">Comentar</button>
+          </div>
+        </article>
+      <% }) %>
+    </section>
+
+    <!-- Sidebar -->
+    <aside class="hidden md:flex flex-col space-y-4">
+      <div class="bg-white text-gray-900 p-4 rounded-xl shadow border border-pink-200">
+        <h4 class="text-sm font-semibold mb-2 text-red-600">Gente para chatear</h4>
+        <p class="text-sm text-gray-600 italic">Todavía no tienes amigos</p>
+      </div>
+
+      <div class="bg-white text-gray-900 p-4 rounded-xl shadow border border-pink-200">
+        <h4 class="text-sm font-semibold mb-2 text-red-600">Calendario de eventos</h4>
+        <p class="text-sm text-gray-600 italic">Próximamente...</p>
+      </div>
+    </aside>
   </main>
 
-  <footer class="py-6 px-4 text-center text-white">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center">
-      <div class="text-sm">© 2025 MusicVibe</div>
-      <div class="flex space-x-4 mt-4 sm:mt-0">
-        <a href="#" class="hover:underline">Instagram</a>
-        <a href="#" class="hover:underline">Twitter</a>
-        <a href="/privacity" class="hover:underline">Términos</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    const todasLasPublicaciones = <%- JSON.stringify(publicaciones) %>;
-    const feedContainer = document.getElementById('feedContainer');
-    const loadMoreBtn = document.getElementById('loadMoreBtn');
-    let publicacionesMostradas = 0;
-    const publicacionesPorCarga = 5;
-
-    function mezclarYOrdenarPorFecha(data) {
-      return data
-        .sort(() => Math.random() - 0.5)
-        .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-    }
-
-    const publicacionesOrdenadas = mezclarYOrdenarPorFecha(todasLasPublicaciones);
-
-    function cargarPublicaciones() {
-      const siguientes = publicacionesOrdenadas.slice(publicacionesMostradas, publicacionesMostradas + publicacionesPorCarga);
-      siguientes.forEach(publi => {
-        const card = document.createElement('div');
-        card.className = "bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1";
-
-        if (publi.foto) {
-          const img = document.createElement('img');
-          img.src = publi.foto;
-          img.alt = "Imagen";
-          img.className = "w-full h-60 object-cover";
-          card.appendChild(img);
-        } else {
-          const div = document.createElement('div');
-          div.className = "bg-gray-300 w-full h-60 flex items-center justify-center text-gray-500";
-          div.textContent = "Sin imagen";
-          card.appendChild(div);
-        }
-
-        const contenidoDiv = document.createElement('div');
-        contenidoDiv.className = "p-4";
-        const texto = document.createElement('h3');
-        texto.className = "text-center font-semibold text-pink-700 break-words";
-        texto.textContent = publi.contenido;
-        contenidoDiv.appendChild(texto);
-        card.appendChild(contenidoDiv);
-
-        feedContainer.appendChild(card);
-      });
-
-      publicacionesMostradas += publicacionesPorCarga;
-
-      if (publicacionesMostradas >= publicacionesOrdenadas.length) {
-        loadMoreBtn.classList.add('hidden');
-      }
-    }
-
-    loadMoreBtn.addEventListener('click', cargarPublicaciones);
-    cargarPublicaciones();
-  </script>
+  <%- include('partials/_footer') %>
 </body>
 </html>

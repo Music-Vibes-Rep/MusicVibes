@@ -46,4 +46,8 @@ app.use('/', userRoutes);
 const publicacionRoutes = require('./routes/publicaciones.routes');
 app.use('/', publicacionRoutes);
 
+const feedRoutes = require('./routes/feed.routes');
+app.use(feedRoutes);
+
+
 module.exports = app;
