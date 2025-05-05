@@ -25,7 +25,9 @@
     <div class="flex space-x-4 border-b border-gray-300 mb-6">
       <button id="btn-tab-perfil" class="tab-btn px-5 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600" onclick="cambiarTab('tab-perfil')">Perfil</button>
       <button id="btn-tab-publicaciones" class="tab-btn px-5 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600" onclick="cambiarTab('tab-publicaciones')">Publicaciones</button>
-      <a href="/logout" class="ml-auto px-4 py-2 text-sm text-red-500 hover:underline">Cerrar sesión</a>
+      <form action="/logout" method="POST" class="block">
+        <button type="submit" class="ml-auto px-4 py-2 text-sm text-red-500 hover:underline">Cerrar sesión</button>
+      </form>
     </div>
 
     <!-- Contenido: PERFIL -->
