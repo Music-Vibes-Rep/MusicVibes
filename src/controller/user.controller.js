@@ -42,7 +42,7 @@ exports.getProfile = (req, res) => {
   });
 };
 
-// Guardar un nuevo usuario
+// Guardar un nuevo usuario, usamos asincronia porque bcrypt necesita asincronia si o si
 exports.registrarUsuario = async (req, res) => {
   const { nombre, email, apellido, password } = req.body;
   let es_musico = req.body.es_musico;
@@ -70,6 +70,26 @@ exports.registrarUsuario = async (req, res) => {
   } catch (err) {
     res.status(500).send('Error interno del servidor');
   }
+};
+
+//Eliminar usuario
+exports.eliminarUsuario = (req,res) => {
+  const id_usuario = req.session.usuario.id;
+
+  if(!id_usuario){
+    return res.redirect('/login');
+  }
+    const sql = 'DELETE FROM Usuario WHERE id_usuario = ?';
+  
+  db.query(sql, [id_usuario], (err) => {
+    if (err){
+      console.error('Error al eliminar usuairio', err.message);
+      return res.status(500).send('Error al eliminar cuneta');
+    }
+  req.session.destroy(() => {
+    res.redirect('/');
+    });
+  });
 };
 
 // Login de usuario

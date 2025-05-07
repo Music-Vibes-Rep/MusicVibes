@@ -6,6 +6,9 @@ const userController = require('../controller/user.controller');
 router.get('/registro', userController.getRegister);
 router.post('/register', userController.registrarUsuario);
 
+//Eliminar
+router.post('/eliminar', userController.eliminarUsuario);
+
 // Login
 router.get('/login', userController.getLogin);
 router.post('/login', userController.loginUsuario);
