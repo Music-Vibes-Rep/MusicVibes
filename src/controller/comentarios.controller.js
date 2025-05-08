@@ -1,27 +1,26 @@
-const { comentario: comentarioPlantilla, comentario } = require('../modules/db/objetosBD');
+const { comentario: comentarioPlantilla } = require('../modules/db/objetosBD');
 const db = require('../modules/db/conection');
 const path = require('path');
-//const authUser = require('../modules/auth/auth');
-//queries
+
 const guardar = "INSERT INTO Comentario (Comentario, id_usuario, id_publicacion) VALUES (?, ?, ?)";
-const mostrar = "SELECT fecha_comentario, Comentario, id_usuario FROM Comentario WHERE Id_usuario = ?";
+const mostrar = "SELECT fecha_comentario, Comentario, id_usuario FROM Comentario WHERE id_usuario = ?";
+const eliminar = 'DELETE FROM Comentario WHERE id_usuario = ?';
+
 
 // Registrar comentarios
 exports.registrarComentario = async (req, res) => {
-  //if (!req.session.usuario || !req.session.usuario.id) return res.redirect('/login');
-
-  const { contenido } = req.body;
+  const { contenido, id_publicacion } = req.body;
   const id_usuario = req.session.usuario.id;
 
   try {
-    const comentario = { ...comentarioPlantilla };
-    comentario.comentario = comentario;
-    comentario.id_publicacion = id_publicacion;
-    comentario.id_usuario = id_usuario;
+    const nuevoComentario = { ...comentarioPlantilla };
+    nuevoComentario.comentario = contenido;
+    nuevoComentario.id_publicacion = id_publicacion;
+    nuevoComentario.id_usuario = id_usuario;
 
-    db.query(guardar, [omentario.comentario, comentario.id_publicacion, comentario.id_usuario], (err) => {
+    db.query(guardar, [nuevoComentario.comentario, nuevoComentario.id_usuario, nuevoComentario.id_publicacion], (err) => {
       if (err) {
-        console.error('Error para comentar', err.message);
+        console.error('Error para comentar:', err.message);
         return res.status(500).send('Error al comentar la publicación');
       }
       res.redirect('/');
@@ -33,20 +32,39 @@ exports.registrarComentario = async (req, res) => {
   }
 };
 
-//mostraremos las publicaciones
+//Eliminar comentarios
+exports.eliminarComentario = (req,res) => {
+  const id_usuario = req.session.usuario.id;
 
-exports.getComentario = (req, res) => {
-  //if (!req.session.usuario.id) return res.redirect('/login');
-  const id_usuario = req.usuario.id;
-  db.query(mostrar, [id_usuario], (err) => {
+  if(!id_usuario){
+    return res.redirect('/login');
+  }  
+  db.query(eliminar, [id_usuario], (err) => {
     if (err){
-      console.error('Error al obtener publicaciones: ', err.message);
+      console.error('Error al eliminar comentario', err.message);
+      return res.status(500).send('Error al eliminar comentario');
+    }
+    /*
+  req.session.destroy(() => {
+    res.redirect('/');
+    });
+    */
+  });
+};
+
+// Mostrar comentarios
+exports.getComentario = (req, res) => {
+  const id_usuario = req.session.usuario.id;
+
+  db.query(mostrar, [id_usuario], (err, results) => {
+    if (err) {
+      console.error('Error al obtener publicaciones:', err.message);
       return res.status(500).send('Error al obtener publicaciones');
     }
-    res.render('perfil',{
-      publicaciones: results,
+
+    res.render('perfil', {
+      comentario: results,
       usuario: req.session.usuario
     });
-
   });
 };
