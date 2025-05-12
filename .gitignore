@@ -7,7 +7,9 @@ node_modules/
 
 # Directorios de uploads (fotos de publicaciones)
 src/public/assets/publicaciones/
-src/public/assets/perfil/
+src/public/assets/perfil/*
+!src/public/assets/perfil/.gitkeep
+
 
 # Configs editoriales
 .vscode/
