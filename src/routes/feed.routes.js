@@ -4,4 +4,7 @@ const feedController = require('../controller/feed.controller');
 
 router.get('/feed', feedController.getFeed);
 
+require('dotenv').config();
+
+
 module.exports = router;

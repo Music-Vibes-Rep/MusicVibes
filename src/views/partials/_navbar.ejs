@@ -7,7 +7,7 @@
       <div class="hidden lg:flex space-x-6 text-sm font-medium text-gray-900">
         <a href="/" class="hover:text-red-600 transition">Inicio</a>
         <a href="/feed" class="hover:text-red-600 transition">Feed</a>
-        <a href="#" class="hover:text-red-600 transition">Eventos</a>
+        <a href="/eventos" class="hover:text-red-600 transition">Eventos</a>
       </div>
       <div class="hidden lg:flex items-center space-x-4 relative">
         <% if (usuario) { %>
@@ -44,7 +44,7 @@
   <div id="mobile-menu" class="lg:hidden hidden px-4 pt-2 pb-4 space-y-2 bg-white/95 backdrop-blur-md border-t border-white/30">
     <a href="/" class="block">Inicio</a>
     <a href="/feed" class="block">Feed</a>
-    <a href="#" class="block">Eventos</a>
+    <a href="/eventos" class="block">Eventos</a>
     <% if (usuario) { %>
       <div class="pt-4 border-t border-gray-200">
         <img src="<%= usuario.foto_perfil || 'assets/img/default-profile.png' %>" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-pink-400">
