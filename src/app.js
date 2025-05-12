@@ -66,5 +66,8 @@ app.use('/', publicacionRoutes);
 const feedRoutes = require('./routes/feed.routes');
 app.use(feedRoutes);
 
+app.use('/', require('./routes/like.routes'));
+
+
 
 module.exports = app;

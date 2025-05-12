@@ -23,7 +23,7 @@ exports.registrarComentario = async (req, res) => {
         console.error('Error para comentar:', err.message);
         return res.status(500).send('Error al comentar la publicación');
       }
-      res.redirect('/');
+      res.redirect('/feed');
     });
 
   } catch (err) {

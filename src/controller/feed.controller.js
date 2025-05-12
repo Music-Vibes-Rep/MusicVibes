@@ -1,4 +1,4 @@
-const db = require("../modules/db/conection");
+const db = require('../modules/db/conection');
 
 exports.getFeed = (req, res) => {
   const sqlPublicaciones = `
@@ -11,17 +11,14 @@ exports.getFeed = (req, res) => {
 
   db.query(sqlPublicaciones, (err, publicaciones) => {
     if (err) {
-      console.error("Error al obtener publicaciones:", err.message);
-      return res.status(500).send("Error al cargar el feed");
+      console.error('Error al obtener publicaciones:', err.message);
+      return res.status(500).send('Error al cargar el feed');
     }
 
-    const ids = publicaciones.map((p) => p.id_publicacion);
-    if (ids.length === 0)
-      return res.render("feed", {
-        publicaciones: [],
-        usuario: req.session.usuario,
-      });
+    const ids = publicaciones.map(p => p.id_publicacion);
+    if (ids.length === 0) return res.render('feed', { publicaciones: [], usuario: req.session.usuario });
 
+    // 1. Obtener comentarios
     const sqlComentarios = `
       SELECT c.id_publicacion, c.Comentario, c.fecha_comentario, u.Nombre AS nombre_usuario
       FROM Comentario c
@@ -31,21 +28,44 @@ exports.getFeed = (req, res) => {
 
     db.query(sqlComentarios, [ids], (err, comentarios) => {
       if (err) {
-        console.error("Error al obtener comentarios:", err.message);
-        return res.status(500).send("Error al cargar comentarios");
+        console.error('Error al obtener comentarios:', err.message);
+        return res.status(500).send('Error al cargar comentarios');
       }
 
-      const agrupados = {};
-      comentarios.forEach((com) => {
-        if (!agrupados[com.id_publicacion]) agrupados[com.id_publicacion] = [];
-        agrupados[com.id_publicacion].push(com);
-      });
+      // 2. Obtener likes
+      const sqlLikes = `
+        SELECT id_publicacion, id_usuario FROM Like_Publicacion
+        WHERE id_publicacion IN (?)
+      `;
 
-      publicaciones.forEach((pub) => {
-        pub.comentarios = agrupados[pub.id_publicacion] || [];
-      });
+      db.query(sqlLikes, [ids], (err, likes) => {
+        if (err) {
+          console.error('Error al obtener likes:', err.message);
+          return res.status(500).send('Error al cargar likes');
+        }
 
-      res.render("feed", { publicaciones, usuario: req.session.usuario });
+        const agrupadosComentarios = {};
+        comentarios.forEach(com => {
+          if (!agrupadosComentarios[com.id_publicacion]) agrupadosComentarios[com.id_publicacion] = [];
+          agrupadosComentarios[com.id_publicacion].push(com);
+        });
+
+        const agrupadosLikes = {};
+        likes.forEach(like => {
+          if (!agrupadosLikes[like.id_publicacion]) agrupadosLikes[like.id_publicacion] = [];
+          agrupadosLikes[like.id_publicacion].push(like.id_usuario);
+        });
+
+        publicaciones.forEach(pub => {
+          pub.comentarios = agrupadosComentarios[pub.id_publicacion] || [];
+          pub.totalLikes = agrupadosLikes[pub.id_publicacion]?.length || 0;
+          pub.usuarioDioLike = req.session.usuario
+            ? agrupadosLikes[pub.id_publicacion]?.includes(req.session.usuario.id)
+            : false;
+        });
+
+        res.render('feed', { publicaciones, usuario: req.session.usuario });
+      });
     });
   });
 };
