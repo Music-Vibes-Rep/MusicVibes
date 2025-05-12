@@ -22,18 +22,25 @@
 
   <div class="max-w-7xl mx-auto px-4">
     <!-- Tabs estilo navegador -->
-    <div class="flex space-x-4 border-b border-gray-300 mb-6">
-      <button id="btn-tab-perfil" class="tab-btn px-5 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600" onclick="cambiarTab('tab-perfil')">Perfil</button>
-      <button id="btn-tab-publicaciones" class="tab-btn px-5 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600" onclick="cambiarTab('tab-publicaciones')">Publicaciones</button>
-      <button id="btn-tab-editar" class="tab-btn px-5 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600" onclick="cambiarTab('tab-editar')">Editar perfil</button>
-      <form action="/logout" method="POST" class="block">
-        <button type="submit" class="ml-auto px-4 py-2 text-sm text-red-500 hover:underline">Cerrar sesión</button>
-      </form>
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center border-b border-gray-300 mb-6 space-y-3 md:space-y-0">
+      <!-- Tabs navegables con scroll en móvil -->
+      <div class="flex overflow-x-auto md:overflow-visible space-x-4 pb-2 md:pb-0">
+        <button id="btn-tab-perfil" class="tab-btn flex-shrink-0 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600 whitespace-nowrap" onclick="cambiarTab('tab-perfil')">Perfil</button>
+        <button id="btn-tab-publicaciones" class="tab-btn flex-shrink-0 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600 whitespace-nowrap" onclick="cambiarTab('tab-publicaciones')">Publicaciones</button>
+        <button id="btn-tab-editar" class="tab-btn flex-shrink-0 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600 whitespace-nowrap" onclick="cambiarTab('tab-editar')">Editar perfil</button>
+      </div>
 
-      <form action="/eliminar" method="POST" class="block">
-        <button type="submit" class="ml-auto px-4 py-2 text-sm text-red-500 hover:underline">eliminar perfil</button>
-      </form>
+      <!-- Acciones de sesión -->
+      <div class="flex items-center space-x-4">
+        <form action="/logout" method="POST">
+          <button type="submit" class="text-sm text-red-500 hover:underline whitespace-nowrap">Cerrar sesión</button>
+        </form>
+        <form action="/eliminar" method="POST">
+          <button type="submit" class="text-sm text-red-500 hover:underline whitespace-nowrap">Eliminar perfil</button>
+        </form>
+      </div>
     </div>
+
 
     <!-- Contenido: PERFIL -->
     <div id="tab-perfil" class="tab-content bg-white p-8 rounded-xl shadow-md">
