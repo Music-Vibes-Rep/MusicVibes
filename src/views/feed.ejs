@@ -45,23 +45,48 @@
               <p class="text-xs text-gray-500"><%= new Date(pub.fecha_publicacion).toLocaleDateString() %></p>
             </div>
           </div>
-
+      
           <% if (pub.foto) { %>
             <img src="<%= pub.foto %>" alt="Imagen de publicación" class="w-full rounded-md mb-3 object-contain max-h-[600px] border border-gray-200" />
           <% } %>
-
+      
           <p class="text-gray-800 text-sm whitespace-pre-line"><%= pub.contenido %></p>
-
-
-
-          <form action="/comentar" method="POST">
-            <input type="hidden" name="id_publicacion" value="<%= pub.id_publicacion %>">
-            <textarea name="contenido" required></textarea>
-            <button type="submit">Comentar</button>
-          </form>
+      
+          <!-- Comentarios desplegables -->
+          <button 
+            type="button" 
+            onclick="toggleComentarios(<%= pub.id_publicacion %>)" 
+            class="mt-3 text-sm text-pink-700 font-semibold hover:underline"
+          >
+            Comentarios (<%= pub.comentarios.length %>) 
+            <span id="flecha-<%= pub.id_publicacion %>">▼</span>
+          </button>
+      
+          <div id="comentarios-<%= pub.id_publicacion %>" class="mt-2 space-y-2" style="display: none;">
+            <% pub.comentarios.forEach(com => { %>
+              <div class="bg-gray-100 text-gray-800 p-2 rounded-md shadow">
+                <div class="flex justify-between items-center">
+                  <p>
+                    <strong><%= com.nombre_usuario %></strong>: <%= com.Comentario %>
+                  </p>
+                  <span class="text-xs text-gray-500 ml-2 whitespace-nowrap">
+                    <%= new Date(com.fecha_comentario).toLocaleDateString('es-ES') %>
+                  </span>
+                </div>
+              </div>
+            <% }) %>
+          </div>
           
+      
+          <!-- Formulario de comentar -->
+          <form action="/comentar" method="POST" class="mt-4">
+            <input type="hidden" name="id_publicacion" value="<%= pub.id_publicacion %>">
+            <textarea name="contenido" rows="2" required class="w-full p-2 border rounded-md resize-none text-sm text-gray-900" placeholder="Escribe un comentario..."></textarea>
+            <button type="submit" class="mt-1 bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded text-sm">Comentar</button>
+          </form>
         </article>
       <% }) %>
+      
     </section>
 
     <!-- Sidebar -->
@@ -79,5 +104,18 @@
   </main>
 
   <%- include('partials/_footer') %>
+
+  <script>
+    function toggleComentarios(id) {
+      const box = document.getElementById(`comentarios-${id}`);
+      const arrow = document.getElementById(`flecha-${id}`);
+  
+      const isHidden = box.style.display === 'none' || !box.style.display;
+  
+      box.style.display = isHidden ? 'block' : 'none';
+      arrow.textContent = isHidden ? '▲' : '▼';
+    }
+  </script>
+  
 </body>
 </html>
