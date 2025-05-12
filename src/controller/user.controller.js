@@ -31,12 +31,25 @@ exports.getProfile = (req, res) => {
   const id_usuario = req.session.usuario.id;
 
   const sqlUser = `
-    SELECT u.*, i.Nombre AS instrumento_nombre, p.Provincia AS provincia_nombre
+    SELECT 
+      u.id_usuario,
+      u.Nombre AS nombre,
+      u.Apellido AS apellido,
+      u.email,
+      u.password,
+      u.foto_perfil,
+      u.descripcion,
+      u.id_instrumento,
+      u.id_provincia,
+      u.es_musico,
+      i.Nombre AS instrumento_nombre,
+      p.Provincia AS provincia_nombre
     FROM Usuario u
     LEFT JOIN Instrumento i ON u.id_instrumento = i.id_instrumento
     LEFT JOIN Provincia p ON u.id_provincia = p.id_provincia
     WHERE u.id_usuario = ?
   `;
+
   const sqlPub = 'SELECT * FROM Publicacion WHERE id_usuario = ? ORDER BY fecha_publicacion DESC';
   const sqlInst = 'SELECT * FROM Instrumento';
   const sqlProv = 'SELECT * FROM Provincia';
@@ -80,6 +93,7 @@ exports.getProfile = (req, res) => {
 };
 
 
+
 exports.editarPerfil = (req, res) => {
   if (!req.session.usuario) return res.redirect('/login');
 
@@ -94,7 +108,7 @@ exports.editarPerfil = (req, res) => {
 
   const sql = `
     UPDATE Usuario 
-    SET nombre = ?, apellido = ?, descripcion = ?, foto_perfil = ?, id_instrumento = ?, id_provincia = ?
+    SET Nombre = ?, Apellido = ?, descripcion = ?, foto_perfil = ?, id_instrumento = ?, id_provincia = ?
     WHERE id_usuario = ?
   `;
 
