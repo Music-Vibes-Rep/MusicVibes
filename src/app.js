@@ -3,10 +3,27 @@ const path = require('path');
 const session = require('express-session');
 const app = express();
 const db = require('./modules/db/conection');
+const multer = require('multer');
 
 // Configurar motor de plantillas EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Configurar almacenamiento con multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, 'public/assets/perfil'));
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = Date.now() + '-' + file.originalname;
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({ storage });
+
+// Middleware global para aceptar archivos desde formularios
+app.use(upload.single('foto_perfil'));
 
 // Middleware para archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));

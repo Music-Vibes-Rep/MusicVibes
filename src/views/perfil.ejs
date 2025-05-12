@@ -25,6 +25,7 @@
     <div class="flex space-x-4 border-b border-gray-300 mb-6">
       <button id="btn-tab-perfil" class="tab-btn px-5 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600" onclick="cambiarTab('tab-perfil')">Perfil</button>
       <button id="btn-tab-publicaciones" class="tab-btn px-5 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600" onclick="cambiarTab('tab-publicaciones')">Publicaciones</button>
+      <button id="btn-tab-editar" class="tab-btn px-5 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600" onclick="cambiarTab('tab-editar')">Editar perfil</button>
       <form action="/logout" method="POST" class="block">
         <button type="submit" class="ml-auto px-4 py-2 text-sm text-red-500 hover:underline">Cerrar sesión</button>
       </form>
@@ -35,23 +36,33 @@
     </div>
 
     <!-- Contenido: PERFIL -->
-    <div id="tab-perfil" class="tab-content bg-white p-8 rounded-xl shadow-sm">
-      <div class="flex flex-col md:flex-row gap-10 items-center md:items-start">
-        <img src="<%= usuario.foto_perfil || 'assets/img/default-profile.png' %>" alt="Foto de perfil" class="w-40 h-40 rounded-full border-4 border-pink-400 object-cover">
-        <div class="text-center md:text-left">
-          <h2 class="text-3xl font-extrabold text-gray-800"><%= usuario.nombre %> <%= usuario.apellido %></h2>
-          <p class="mt-2 text-gray-600 text-lg"><%= usuario.descripcion || 'Aún no has escrito una descripción' %></p>
+    <div id="tab-perfil" class="tab-content bg-white p-8 rounded-xl shadow-md">
+      <div class="flex flex-col items-center space-y-4">
+        <!-- Foto de perfil -->
+        <div class="w-40 h-40 relative">
+          <img src="<%= usuario.foto_perfil ? usuario.foto_perfil : '/assets/img/default-profile.png' %>" 
+              alt="Foto de perfil"
+              class="w-full h-full object-cover rounded-full border-4 border-pink-400 shadow-md">
         </div>
-      </div>
 
-      <div class="grid md:grid-cols-2 gap-6 mt-10">
-        <div class="bg-pink-50 p-6 rounded-lg shadow">
-          <h3 class="font-semibold text-pink-600 text-lg">Destacados</h3>
-          <p class="text-gray-700 mt-2">Aquí podrías poner una publicación destacada, foto o enlace.</p>
+        <!-- Nombre y descripción -->
+        <div class="text-center">
+          <h2 class="text-3xl font-bold text-gray-800 mb-1"><%= usuario.nombre %> <%= usuario.apellido %></h2>
+          <p class="text-gray-600 italic">
+            <%= usuario.descripcion || 'Aún no has escrito una descripción.' %>
+          </p>
         </div>
-        <div class="bg-pink-50 p-6 rounded-lg shadow">
-          <h3 class="font-semibold text-pink-600 text-lg">Intereses</h3>
-          <p class="text-gray-700 mt-2">Guitarra, rock, metal, lo que quieras compartir.</p>
+
+        <!-- Info adicional -->
+        <div class="mt-4 grid sm:grid-cols-2 gap-4 text-center text-sm text-gray-700">
+          <div class="bg-pink-50 px-6 py-4 rounded-lg shadow-inner">
+            <p class="font-semibold text-pink-600">Instrumento</p>
+            <p><%= usuario.instrumento_nombre || 'No especificado' %></p>
+          </div>
+          <div class="bg-pink-50 px-6 py-4 rounded-lg shadow-inner">
+            <p class="font-semibold text-pink-600">Provincia</p>
+            <p><%= usuario.provincia_nombre || 'No especificada' %></p>
+          </div>
         </div>
       </div>
 
@@ -73,6 +84,7 @@
         </div>
       <% } %>
     </div>
+
 
     <!-- Contenido: PUBLICACIONES -->
     <div id="tab-publicaciones" class="tab-content hidden bg-white p-8 rounded-xl shadow-sm">
@@ -100,6 +112,57 @@
         <p class="text-gray-500">Aún no tienes publicaciones.</p>
       <% } %>
     </div>
+
+    <!-- Contenido: EDITAR PERFIL -->
+    <div id="tab-editar" class="tab-content hidden bg-white p-8 rounded-xl shadow-sm">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar perfil</h2>
+      <form method="POST" action="/perfil/editar" enctype="multipart/form-data" class="space-y-6">
+        
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium text-gray-700">Nombre</label>
+            <input type="text" name="nombre" value="<%= usuario.nombre %>" class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400" required>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">Apellido</label>
+            <input type="text" name="apellido" value="<%= usuario.apellido %>" class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium text-gray-700">Descripción</label>
+          <textarea name="descripcion" rows="3" class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400"><%= usuario.descripcion || '' %></textarea>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium text-gray-700">Instrumento</label>
+            <select name="id_instrumento" class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <% instrumentos.forEach(inst => { %>
+                <option value="<%= inst.id_instrumento %>" <%= usuario.id_instrumento == inst.id_instrumento ? 'selected' : '' %>><%= inst.Nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">Provincia</label>
+            <select name="id_provincia" class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <% provincias.forEach(p => { %>
+                <option value="<%= p.id_provincia %>" <%= usuario.id_provincia == p.id_provincia ? 'selected' : '' %>><%= p.Provincia %></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium text-gray-700">Foto de perfil</label>
+          <input type="file" name="foto_perfil" accept="image/*" class="block mt-1">
+        </div>
+
+        <button type="submit" class="bg-pink-600 text-white px-6 py-2 rounded-md hover:bg-pink-700 transition">Guardar cambios</button>
+      </form>
+    </div>
+
+     
   </div>
 
   <script>cambiarTab('tab-perfil');</script>

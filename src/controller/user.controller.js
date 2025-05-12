@@ -24,23 +24,98 @@ exports.getLogin = (req, res) => {
 
 // Mostrar perfil de usuario
 exports.getProfile = (req, res) => {
-  // Si no está logueado, redirigir al login
   if (!req.session.usuario) {
     return res.redirect('/login');
   }
 
-  const usuario = req.session.usuario;
-  const sql = 'SELECT * FROM Publicacion WHERE id_usuario = ? ORDER BY fecha_publicacion DESC';
-  db.query(sql, [usuario.id], (err, publicaciones) => {
-    if (err) {
-      console.error('Error al obtener publicaciones:', err.message);
-      return res.status(500).send('Error interno del servidor');
+  const id_usuario = req.session.usuario.id;
+
+  const sqlUser = `
+    SELECT u.*, i.Nombre AS instrumento_nombre, p.Provincia AS provincia_nombre
+    FROM Usuario u
+    LEFT JOIN Instrumento i ON u.id_instrumento = i.id_instrumento
+    LEFT JOIN Provincia p ON u.id_provincia = p.id_provincia
+    WHERE u.id_usuario = ?
+  `;
+  const sqlPub = 'SELECT * FROM Publicacion WHERE id_usuario = ? ORDER BY fecha_publicacion DESC';
+  const sqlInst = 'SELECT * FROM Instrumento';
+  const sqlProv = 'SELECT * FROM Provincia';
+
+  db.query(sqlUser, [id_usuario], (err, resultUsuario) => {
+    if (err || resultUsuario.length === 0) {
+      console.error('Error al obtener usuario:', err?.message);
+      return res.status(500).send('Error al obtener usuario');
     }
 
-    // Renderizar el perfil con las publicaciones
-    res.render('perfil', { usuario, publicacion: publicaciones });
+    const usuario = resultUsuario[0];
+
+    db.query(sqlPub, [id_usuario], (err, publicaciones) => {
+      if (err) {
+        console.error('Error al obtener publicaciones:', err.message);
+        return res.status(500).send('Error al obtener publicaciones');
+      }
+
+      db.query(sqlInst, (err, instrumentos) => {
+        if (err) {
+          console.error('Error al obtener instrumentos:', err.message);
+          return res.status(500).send('Error al obtener instrumentos');
+        }
+
+        db.query(sqlProv, (err, provincias) => {
+          if (err) {
+            console.error('Error al obtener provincias:', err.message);
+            return res.status(500).send('Error al obtener provincias');
+          }
+
+          res.render('perfil', {
+            usuario,
+            publicacion: publicaciones,
+            instrumentos,
+            provincias
+          });
+        });
+      });
+    });
   });
 };
+
+
+exports.editarPerfil = (req, res) => {
+  if (!req.session.usuario) return res.redirect('/login');
+
+  const id_usuario = req.session.usuario.id;
+  const { nombre, apellido, descripcion, id_instrumento, id_provincia } = req.body;
+
+  let foto_perfil = req.session.usuario.foto_perfil;
+
+  if (req.file) {
+    foto_perfil = '/assets/perfil/' + req.file.filename;
+  }
+
+  const sql = `
+    UPDATE Usuario 
+    SET nombre = ?, apellido = ?, descripcion = ?, foto_perfil = ?, id_instrumento = ?, id_provincia = ?
+    WHERE id_usuario = ?
+  `;
+
+  db.query(sql, [nombre, apellido, descripcion, foto_perfil, id_instrumento || null, id_provincia || null, id_usuario], (err) => {
+    if (err) {
+      console.error('Error al actualizar perfil:', err.message);
+      return res.status(500).send('Error al actualizar perfil');
+    }
+
+    // Actualizar los datos en sesión
+    req.session.usuario.nombre = nombre;
+    req.session.usuario.apellido = apellido;
+    req.session.usuario.descripcion = descripcion;
+    req.session.usuario.foto_perfil = foto_perfil;
+    req.session.usuario.id_instrumento = id_instrumento;
+    req.session.usuario.id_provincia = id_provincia;
+
+    res.redirect('/perfil');
+  });
+};
+
 
 // Guardar un nuevo usuario, usamos asincronia porque bcrypt necesita asincronia si o si
 exports.registrarUsuario = async (req, res) => {

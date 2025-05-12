@@ -19,7 +19,11 @@ router.post('/logout', userController.logoutUsuario);
 // Perfil
 router.get('/perfil', userController.getProfile);
 
-// Privacidad
+// Editar Perfil
+router.post('/perfil/editar', userController.editarPerfil);
+
+
+// Politicas de Privacidad
 router.get('/privacity', userController.getPrivacidad);
 
 module.exports = router;
