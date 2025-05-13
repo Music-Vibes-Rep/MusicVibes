@@ -1,10 +1,10 @@
 const multer = require('multer');
 const path = require('path');
 
-// Configuramos dónde se guardan las imágenes
+// Configurar almacenamiento para publicaciones
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'src/public/assets/publicaciones');
+    cb(null, path.join(__dirname, '../../public/assets/publicaciones'));
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
   }
 });
 
-// Filtrar para aceptar solo imágenes
+// Validar solo imágenes
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -24,9 +24,6 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
-  storage,
-  fileFilter
-});
+const upload = multer({ storage, fileFilter });
 
 module.exports = upload;

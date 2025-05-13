@@ -1,32 +1,29 @@
 const bcrypt = require('bcrypt');
 const UserModel = require('../modules/auth/registro');
-const { usuario: usuarioPlantilla, publicacion } = require('../modules/db/objetosBD');
+const { usuario: usuarioPlantilla } = require('../modules/db/objetosBD');
 const db = require('../modules/db/conection');
 
-// Renderizar formulario de registro
+// Mostrar formulario de registro
 exports.getRegister = (req, res) => {
   if (req.session.usuario) return res.redirect('/');
   res.render('register');
 };
 
-// Renderizar politica de privacidad
+// Mostrar política de privacidad
 exports.getPrivacidad = (req, res) => {
   const usuario = req.session.usuario || null;
   res.render('privacity', { usuario });
 };
 
-
-// Renderizar formulario de login
+// Mostrar formulario de login
 exports.getLogin = (req, res) => {
   if (req.session.usuario) return res.redirect('/');
   res.render('login', { isRegister: false });
 };
 
-// Mostrar perfil de usuario
+// Mostrar perfil
 exports.getProfile = (req, res) => {
-  if (!req.session.usuario) {
-    return res.redirect('/login');
-  }
+  if (!req.session.usuario) return res.redirect('/login');
 
   const id_usuario = req.session.usuario.id;
 
@@ -92,19 +89,14 @@ exports.getProfile = (req, res) => {
   });
 };
 
-
-
+// Editar perfil
 exports.editarPerfil = (req, res) => {
   if (!req.session.usuario) return res.redirect('/login');
 
   const id_usuario = req.session.usuario.id;
   const { nombre, apellido, descripcion, id_instrumento, id_provincia } = req.body;
 
-  let foto_perfil = req.session.usuario.foto_perfil;
-
-  if (req.file) {
-    foto_perfil = '/assets/perfil/' + req.file.filename;
-  }
+  const nuevaFoto = req.file ? '/assets/perfil/' + req.file.filename : req.session.usuario.foto_perfil;
 
   const sql = `
     UPDATE Usuario 
@@ -112,17 +104,16 @@ exports.editarPerfil = (req, res) => {
     WHERE id_usuario = ?
   `;
 
-  db.query(sql, [nombre, apellido, descripcion, foto_perfil, id_instrumento || null, id_provincia || null, id_usuario], (err) => {
+  db.query(sql, [nombre, apellido, descripcion, nuevaFoto, id_instrumento || null, id_provincia || null, id_usuario], (err) => {
     if (err) {
       console.error('Error al actualizar perfil:', err.message);
       return res.status(500).send('Error al actualizar perfil');
     }
 
-    // Actualizar los datos en sesión
     req.session.usuario.nombre = nombre;
     req.session.usuario.apellido = apellido;
     req.session.usuario.descripcion = descripcion;
-    req.session.usuario.foto_perfil = foto_perfil;
+    req.session.usuario.foto_perfil = nuevaFoto;
     req.session.usuario.id_instrumento = id_instrumento;
     req.session.usuario.id_provincia = id_provincia;
 
@@ -130,8 +121,7 @@ exports.editarPerfil = (req, res) => {
   });
 };
 
-
-// Guardar un nuevo usuario, usamos asincronia porque bcrypt necesita asincronia si o si
+// Registrar usuario
 exports.registrarUsuario = async (req, res) => {
   const { nombre, email, apellido, password } = req.body;
   let es_musico = req.body.es_musico;
@@ -144,8 +134,8 @@ exports.registrarUsuario = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const usuario = { ...usuarioPlantilla };
+
     usuario.nombre = nombre;
     usuario.apellido = apellido;
     usuario.email = email;
@@ -161,23 +151,19 @@ exports.registrarUsuario = async (req, res) => {
   }
 };
 
-//Eliminar usuario
-exports.eliminarUsuario = (req,res) => {
-  const id_usuario = req.session.usuario.id;
+// Eliminar usuario
+exports.eliminarUsuario = (req, res) => {
+  const id_usuario = req.session.usuario?.id;
+  if (!id_usuario) return res.redirect('/login');
 
-  if(!id_usuario){
-    return res.redirect('/login');
-  }
-    const sql = 'DELETE FROM Usuario WHERE id_usuario = ?';
-  
+  const sql = 'DELETE FROM Usuario WHERE id_usuario = ?';
   db.query(sql, [id_usuario], (err) => {
-    if (err){
-      console.error('Error al eliminar usuairio', err.message);
-      return res.status(500).send('Error al eliminar cuneta');
+    if (err) {
+      console.error('Error al eliminar usuario', err.message);
+      return res.status(500).send('Error al eliminar cuenta');
     }
-  req.session.destroy(() => {
-    res.redirect('/');
-    });
+
+    req.session.destroy(() => res.redirect('/'));
   });
 };
 
@@ -198,20 +184,23 @@ exports.loginUsuario = (req, res) => {
       return res.status(401).send('Contraseña incorrecta');
     }
 
-    // Guardar datos en la sesión
     req.session.usuario = {
       id: usuario.id_usuario,
       nombre: usuario.Nombre,
       apellido: usuario.Apellido,
       email: usuario.email,
-      es_musico: usuario.es_musico
+      es_musico: usuario.es_musico,
+      foto_perfil: usuario.foto_perfil,
+      descripcion: usuario.descripcion,
+      id_instrumento: usuario.id_instrumento,
+      id_provincia: usuario.id_provincia
     };
-    
+
     res.redirect('/');
   });
 };
 
-// Logout de usuario
+// Logout
 exports.logoutUsuario = (req, res) => {
   req.session.destroy(() => {
     res.redirect('/');

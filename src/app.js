@@ -1,36 +1,24 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
-const multer = require('multer');
 const db = require('./modules/db/conection');
-require('dotenv').config(); 
+require('dotenv').config();
 
 const app = express();
 
-// Configurar motor de plantillas EJS
+// Configuración del motor de plantillas
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Configurar almacenamiento con multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'public/assets/perfil'));
-  },
-  filename: function (req, file, cb) {
-    const uniqueName = Date.now() + '-' + file.originalname;
-    cb(null, uniqueName);
-  }
-});
-const upload = multer({ storage });
-app.use(upload.single('foto_perfil'));
-
-// Middleware estático y body-parser
+// Middleware para archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets/publicaciones', express.static(path.join(__dirname, 'public/assets/publicaciones')));
+
+// Middleware para formularios
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Configurar sesiones
+// Configuración de sesiones
 app.use(session({
   secret: 'clave_secreta_super_segura',
   resave: false,
@@ -53,7 +41,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// Rutas del sistema
+// Rutas
 app.use('/', require('./routes/user.routes'));
 app.use('/', require('./routes/publicaciones.routes'));
 app.use('/', require('./routes/like.routes'));
