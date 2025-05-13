@@ -1,13 +1,15 @@
 const db = require('../modules/db/conection');
 
 exports.getFeed = (req, res) => {
-  const sqlPublicaciones = `
-    SELECT p.id_publicacion, p.contenido, p.foto, p.fecha_publicacion,
-           u.Nombre AS nombre_usuario, u.foto_perfil
-    FROM Publicacion p
-    JOIN Usuario u ON u.id_usuario = p.id_usuario
-    ORDER BY fecha_publicacion DESC
-  `;
+const sqlPublicaciones = `
+  SELECT p.id_publicacion, p.contenido, p.foto, p.fecha_publicacion,
+         p.id_usuario,  -- AÑADIDO: necesario para saber quién es el autor
+         u.Nombre AS nombre_usuario, u.foto_perfil
+  FROM Publicacion p
+  JOIN Usuario u ON u.id_usuario = p.id_usuario
+  ORDER BY fecha_publicacion DESC
+`;
+
 
   db.query(sqlPublicaciones, (err, publicaciones) => {
     if (err) {
@@ -18,7 +20,6 @@ exports.getFeed = (req, res) => {
     const ids = publicaciones.map(p => p.id_publicacion);
     if (ids.length === 0) return res.render('feed', { publicaciones: [], usuario: req.session.usuario });
 
-    // 1. Obtener comentarios
     const sqlComentarios = `
       SELECT c.id_publicacion, c.Comentario, c.fecha_comentario, u.Nombre AS nombre_usuario
       FROM Comentario c
@@ -32,7 +33,6 @@ exports.getFeed = (req, res) => {
         return res.status(500).send('Error al cargar comentarios');
       }
 
-      // 2. Obtener likes
       const sqlLikes = `
         SELECT id_publicacion, id_usuario FROM Like_Publicacion
         WHERE id_publicacion IN (?)
