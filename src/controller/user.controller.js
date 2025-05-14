@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const UserModel = require('../modules/auth/registro');
 const { usuario: usuarioPlantilla } = require('../modules/db/objetosBD');
 const db = require('../modules/db/conection');
+const Swal = require('sweetalert2')
 
 //queries
 
@@ -76,20 +77,46 @@ exports.getProfile = (req, res) => {
 
   db.query(sqlUser, [id_usuario], (err, resultUsuario) => {
     if (err || resultUsuario.length === 0) {
-      console.error('Error al obtener usuario:', err?.message);
+      //console.error('Error al obtener usuario:', err?.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Error al obtener usuario",
+      });
       return res.status(500).send('Error al obtener usuario');
     }
 
     const usuario = resultUsuario[0];
 
     db.query(sqlPub, [id_usuario], (err, publicaciones) => {
-      if (err) return res.status(500).send('Error al obtener publicaciones');
+      if (err) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Error al obtener publicaciones",
+        });
+        return res.status(500).send('Error al obtener publicaciones');
+      }
 
       db.query(sqlInst, (err, instrumentos) => {
-        if (err) return res.status(500).send('Error al obtener instrumentos');
+        if (err) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Error al obtener instrumentos",
+          });
+          return res.status(500).send('Error al obtener instrumentos');
+        }
 
         db.query(sqlProv, (err, provincias) => {
-          if (err) return res.status(500).send('Error al obtener provincias');
+          if (err) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Error al obtener provincias",
+            });
+            return res.status(500).send('Error al obtener provincias');
+          }
 
           res.render('perfil', {
             usuario,
@@ -157,7 +184,12 @@ exports.registrarUsuario = async (req, res) => {
       res.redirect('/login');
     });
   } catch (err) {
-    res.status(500).send('Error interno del servidor');
+    //res.status(500).send('Error interno del servidor');
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Error interno del servidor",
+    });
   }
 };
 
@@ -168,7 +200,15 @@ exports.eliminarUsuario = (req, res) => {
 
   const sql = 'DELETE FROM Usuario WHERE id_usuario = ?';
   db.query(sql, [id_usuario], (err) => {
-    if (err) return res.status(500).send('Error al eliminar cuenta');
+    if (err) {
+      //console.error('Error al eliminar cuenta:', err?.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Error al eliminar cuenta",
+      });
+      return res.status(500).send('Error al eliminar cuenta');
+    }
     req.session.destroy(() => res.redirect('/'));
   });
 };

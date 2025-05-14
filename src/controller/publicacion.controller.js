@@ -31,7 +31,12 @@ exports.registrarPublicacion = async (req, res) => {
   const sql = "INSERT INTO Publicacion (contenido, foto, id_usuario) VALUES (?, ?, ?)";
   db.query(sql, [publicacion.contenido, publicacion.foto, publicacion.id_usuario], (err) => {
     if (err) {
-      console.error('Error al guardar publicación:', err.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Error al guardar publicación",
+      });
+      //console.error('Error al guardar publicación:', err.message);
       return res.status(500).send('Error al guardar publicación');
     }
     res.redirect('/feed');
@@ -50,6 +55,11 @@ exports.getEditarPublicacion = (req, res) => {
 
   db.query(sql, [id, req.session.usuario.id], (err, results) => {
     if (err || results.length === 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Error al buscar publicación para editar",
+      });
       console.error('Error al buscar publicación para editar:', err?.message);
       return res.status(404).send('Publicación no encontrada');
     }
