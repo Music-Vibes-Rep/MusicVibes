@@ -33,22 +33,18 @@ exports.registrarComentario = async (req, res) => {
 };
 
 //Eliminar comentarios
-exports.eliminarComentario = (req,res) => {
+exports.eliminarComentario = (req, res) => {
+  const { id_comentario } = req.params;
   const id_usuario = req.session.usuario.id;
 
-  if(!id_usuario){
-    return res.redirect('/login');
-  }  
-  db.query(eliminar, [id_usuario], (err) => {
-    if (err){
-      console.error('Error al eliminar comentario', err.message);
+  const sql = 'DELETE FROM Comentario WHERE id_comentario = ? AND id_usuario = ?';
+
+  db.query(sql, [id_comentario, id_usuario], (err) => {
+    if (err) {
+      console.error('❌ Error al eliminar comentario:', err.message);
       return res.status(500).send('Error al eliminar comentario');
     }
-    /*
-  req.session.destroy(() => {
-    res.redirect('/');
-    });
-    */
+    res.redirect('/feed');
   });
 };
 

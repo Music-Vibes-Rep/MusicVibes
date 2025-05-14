@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,19 +12,24 @@
       margin-top: 80px;
     }
 
+
     input[type="search"]::-webkit-search-cancel-button {
       -webkit-appearance: none;
     }
   </style>
 </head>
 
+
 <body class="text-white bg-gradient-to-r from-red-600 to-pink-700 min-h-screen">
   <%- include('partials/_navbar') %>
 
+
     <main class="main-wrapper container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+
 
       <!-- Centro (barra + publicaciones) -->
       <section class="md:col-span-2 space-y-6">
+
 
         <!-- Barra de búsqueda + botón -->
         <div
@@ -40,8 +46,10 @@
           </div>
         </div>
 
+
         <% publicaciones.forEach(pub=> { %>
           <article class="relative bg-white text-gray-900 rounded-xl shadow-md p-4 border-l-4 border-pink-400">
+
 
             <% if (usuario && parseInt(usuario.id)===parseInt(pub.id_usuario)) { %>
               <div class="absolute top-3 right-4 flex space-x-2 z-10">
@@ -58,7 +66,10 @@
                 </form>
               </div>
 
+
               <% } %>
+
+
 
 
                 <div class="flex items-center space-x-3 mb-3">
@@ -74,27 +85,32 @@
                   </div>
                 </div>
 
+
                 <% if (pub.foto) { %>
                   <img src="<%= pub.foto %>" alt="Imagen de publicación"
                     class="w-full rounded-md mb-3 object-contain max-h-[600px] border border-gray-200" />
                   <% } %>
 
+
                     <p class="text-gray-800 text-sm whitespace-pre-line">
                       <%= pub.contenido %>
                     </p>
 
+
                     <!-- Interacciones -->
                     <div class="mt-4 bg-gray-100 p-4 rounded-lg shadow-inner space-y-4">
+
 
                       <!-- Likes -->
                       <form action="/like" method="POST" class="flex items-center justify-start gap-2">
                         <input type="hidden" name="id_publicacion" value="<%= pub.id_publicacion %>">
 
+
                         <button type="<%= usuario ? 'submit' : 'button' %>"
                           class="flex items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
                           <%=usuario ? '' : 'disabled' %>
                           >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition duration-200 transform group-hover:scale-110 
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition duration-200 transform group-hover:scale-110
                   <%= pub.usuarioDioLike ? 'text-pink-600' : 'text-gray-400' %>"
                             fill="<%= pub.usuarioDioLike ? 'currentColor' : 'none' %>" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
@@ -107,6 +123,9 @@
 
 
 
+
+
+
                       <!-- Comentarios -->
                       <button type="button" onclick="toggleComentarios(<%= pub.id_publicacion %>)"
                         class="text-sm text-pink-700 font-semibold hover:underline flex items-center gap-1">
@@ -114,10 +133,10 @@
                           <span id="flecha-<%= pub.id_publicacion %>">▼</span>
                       </button>
 
-                      <div id="comentarios-<%= pub.id_publicacion %>" class="space-y-3" style="display: none;">
-                        <% pub.comentarios.forEach(com=> { %>
-                          <div
-                            class="bg-white p-3 rounded-md shadow flex justify-between items-start border border-gray-200">
+
+                      <% pub.comentarios.forEach(com=> { %>
+                        <div class="bg-white p-3 rounded-md shadow border border-gray-200">
+                          <div class="flex justify-between items-start">
                             <div>
                               <strong class="text-red-600">
                                 <%= com.nombre_usuario %>
@@ -126,30 +145,45 @@
                                 <%= com.Comentario %>
                               </p>
                             </div>
-                            <span class="text-xs text-gray-500 ml-4 whitespace-nowrap">
-                              <%= new Date(com.fecha_comentario).toLocaleDateString('es-ES') %>
-                            </span>
+                            <div class="text-right">
+                              <span class="text-xs text-gray-500 block">
+                                <%= new Date(com.fecha_comentario).toLocaleDateString('es-ES') %>
+                              </span>
+                              <% if (usuario && usuario.id===com.id_usuario) { %>
+                                <form action="/comentario/eliminar" method="POST"
+                                  onsubmit="return confirm('¿Eliminar este comentario?')">
+                                  <input type="hidden" name="id_comentario" value="<%= com.id_comentario %>">
+                                  <button class="text-xs text-red-500 hover:underline mt-1">Eliminar</button>
+                                </form>
+                                <% } %>
+                            </div>
                           </div>
-                          <% }) %>
-                      </div>
+                        </div>
+                        <% }) %>
 
-                      <!-- Comentar -->
-                      <form action="/comentar" method="POST" class="space-y-2">
-                        <input type="hidden" name="id_publicacion" value="<%= pub.id_publicacion %>">
-                        <textarea name="contenido" rows="2" required
-                          class="w-full p-2 border rounded-md resize-none text-sm text-gray-900"
-                          placeholder="Escribe un comentario..."></textarea>
-                        <button type="submit"
-                          class="bg-red-600 hover:bg-red-500 text-white px-4 py-1 rounded text-sm shadow">
-                          Comentar
-                        </button>
-                      </form>
+
+
+
+                          <!-- Comentar -->
+                          <form action="/comentar" method="POST" class="space-y-2">
+                            <input type="hidden" name="id_publicacion" value="<%= pub.id_publicacion %>">
+                            <textarea name="contenido" rows="2" required
+                              class="w-full p-2 border rounded-md resize-none text-sm text-gray-900"
+                              placeholder="Escribe un comentario..."></textarea>
+                            <button type="submit"
+                              class="bg-red-600 hover:bg-red-500 text-white px-4 py-1 rounded text-sm shadow">
+                              Comentar
+                            </button>
+                          </form>
+
 
                     </div>
           </article>
           <% }) %>
 
+
       </section>
+
 
       <!-- Sidebar -->
       <aside class="hidden md:flex flex-col space-y-4">
@@ -158,6 +192,7 @@
           <p class="text-sm text-gray-600 italic">Todavía no tienes amigos</p>
         </div>
 
+
         <div class="bg-white text-gray-900 p-4 rounded-xl shadow border border-pink-200">
           <h4 class="text-sm font-semibold mb-2 text-red-600">Calendario de eventos</h4>
           <p class="text-sm text-gray-600 italic">Próximamente...</p>
@@ -165,7 +200,9 @@
       </aside>
     </main>
 
+
     <%- include('partials/_footer') %>
+
 
       <script>
         function toggleComentarios(id) {
@@ -177,5 +214,6 @@
         }
       </script>
 </body>
+
 
 </html>

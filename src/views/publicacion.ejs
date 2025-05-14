@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= publicacion ? 'Editar' : 'Crear' %> publicación</title>
+  <title>
+    <%= publicacion ? 'Editar' : 'Crear' %> publicación
+  </title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     #preview-img {
@@ -11,18 +14,16 @@
     }
   </style>
 </head>
+
 <body class="bg-gray-100 min-h-screen flex items-center justify-center px-4 py-10">
   <div class="bg-white p-8 rounded-lg shadow-lg max-w-xl w-full">
     <h1 class="text-2xl font-bold text-pink-600 mb-6">
       <%= publicacion ? 'Editar publicación' : 'Crear nueva publicación' %>
     </h1>
 
-    <form 
-      method="POST" 
-      action="<%= publicacion ? '/publicaciones/' + publicacion.id_publicacion + '/editar' : '/publicar' %>" 
-      enctype="multipart/form-data" 
-      class="space-y-4"
-    >
+    <form method="POST"
+      action="<%= publicacion ? '/publicaciones/' + publicacion.id_publicacion + '/editar' : '/publicar' %>"
+      enctype="multipart/form-data" class="space-y-4">
       <!-- Contenido -->
       <div>
         <label for="contenido" class="block font-medium">Contenido</label>
@@ -41,24 +42,26 @@
               <input type="checkbox" name="quitarImagen" value="1" /> Quitar imagen actual
             </label>
           </div>
-        <% } %>
+          <% } %>
 
-        <!-- Input para nueva imagen -->
-        <input type="file" name="imagen" id="imagen" accept="image/*"
-          class="w-full border rounded px-3 py-2 mb-2" onchange="previewImagen(this)">
+            <!-- Input para nueva imagen -->
+            <input type="file" name="imagen" id="imagen" accept="image/*" class="w-full border rounded px-3 py-2 mb-2"
+              onchange="previewImagen(this)">
 
-        <div id="preview-container" class="hidden mt-2">
-          <img id="preview-img" class="rounded shadow mb-2" />
-          <button type="button" onclick="borrarImagenSeleccionada()" class="text-sm text-red-600 hover:underline">Quitar imagen seleccionada</button>
-        </div>
+            <div id="preview-container" class="hidden mt-2">
+              <img id="preview-img" class="rounded shadow mb-2" />
+              <button type="button" onclick="borrarImagenSeleccionada()"
+                class="text-sm text-red-600 hover:underline">Quitar imagen seleccionada</button>
+            </div>
       </div>
 
       <!-- Botones -->
       <div class="flex justify-between">
-        <a href="/feed" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">Cancelar</a>
         <button type="submit" class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700 transition">
           <%= publicacion ? 'Actualizar' : 'Publicar' %>
         </button>
+        <a href="/feed" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">Cancelar</a>
+
       </div>
     </form>
   </div>
@@ -88,4 +91,5 @@
     }
   </script>
 </body>
+
 </html>

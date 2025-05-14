@@ -1,15 +1,13 @@
 const db = require('../modules/db/conection');
 
 exports.getFeed = (req, res) => {
-const sqlPublicaciones = `
-  SELECT p.id_publicacion, p.contenido, p.foto, p.fecha_publicacion,
-         p.id_usuario,  -- AÑADIDO: necesario para saber quién es el autor
-         u.Nombre AS nombre_usuario, u.foto_perfil
-  FROM Publicacion p
-  JOIN Usuario u ON u.id_usuario = p.id_usuario
-  ORDER BY fecha_publicacion DESC
-`;
-
+  const sqlPublicaciones = `
+    SELECT p.id_publicacion, p.contenido, p.foto, p.fecha_publicacion,
+           p.id_usuario, u.Nombre AS nombre_usuario, u.foto_perfil
+    FROM Publicacion p
+    JOIN Usuario u ON u.id_usuario = p.id_usuario
+    ORDER BY fecha_publicacion DESC
+  `;
 
   db.query(sqlPublicaciones, (err, publicaciones) => {
     if (err) {
@@ -21,7 +19,7 @@ const sqlPublicaciones = `
     if (ids.length === 0) return res.render('feed', { publicaciones: [], usuario: req.session.usuario });
 
     const sqlComentarios = `
-      SELECT c.id_publicacion, c.Comentario, c.fecha_comentario, u.Nombre AS nombre_usuario
+      SELECT c.id_comentario, c.id_publicacion, c.Comentario, c.fecha_comentario, c.id_usuario, u.Nombre AS nombre_usuario
       FROM Comentario c
       JOIN Usuario u ON c.id_usuario = u.id_usuario
       WHERE c.id_publicacion IN (?)
