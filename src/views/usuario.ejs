@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil público</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gradient-to-r from-red-600 to-pink-700 text-white min-h-screen">
+  <%- include('partials/_navbar') %>
+
+  <main class="pt-24 px-4 max-w-5xl mx-auto">
+    <div class="bg-white text-gray-900 rounded-xl shadow-md p-6 mb-8">
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <img src="<%= usuarioPerfil.foto_perfil || '/assets/img/default-profile.png' %>" alt="Avatar"
+             class="w-32 h-32 object-cover rounded-full border-4 border-pink-400">
+        <div>
+          <h2 class="text-2xl font-bold text-red-600 mb-1">
+            <%= usuarioPerfil.nombre %> <%= usuarioPerfil.apellido %>
+          </h2>
+          <p class="text-gray-700 italic mb-1">
+            <%= usuarioPerfil.descripcion || 'Sin descripción' %>
+          </p>
+          <p class="text-sm text-gray-600">
+            <strong>Músico:</strong> <%= usuarioPerfil.es_musico ? 'Sí' : 'No' %> |
+            <strong>Instrumento:</strong> <%= usuarioPerfil.instrumento_nombre || 'N/D' %> |
+            <strong>Provincia:</strong> <%= usuarioPerfil.provincia_nombre || 'N/D' %>
+          </p>
+
+          <% if (usuario && usuario.id !== usuarioPerfil.id_usuario) { %>
+            <form action="/usuario/<%= usuarioPerfil.id_usuario %>/follow" method="POST" class="mt-4">
+              <button type="submit"
+                      class="px-4 py-2 rounded-md font-semibold shadow-md
+                             <%= yaSigue ? 'bg-gray-300 text-gray-800 hover:bg-gray-400' : 'bg-pink-600 text-white hover:bg-pink-500' %>">
+                <%= yaSigue ? 'Dejar de seguir' : 'Seguir' %>
+              </button>
+            </form>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <% publicaciones.forEach(pub => { %>
+        <div class="bg-white text-gray-900 rounded-xl shadow p-4 border-l-4 border-pink-400">
+          <% if (pub.foto) { %>
+            <img src="<%= pub.foto %>" alt="Imagen" class="w-full h-52 object-cover rounded mb-3">
+          <% } %>
+          <p class="whitespace-pre-line text-sm text-gray-800">
+            <%- pub.contenido %>
+          </p>
+          <p class="text-xs text-gray-500 mt-2">
+            Publicado el <%= new Date(pub.fecha_publicacion).toLocaleDateString('es-ES') %>
+          </p>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+
+  <%- include('partials/_footer') %>
+</body>
+
+</html>

@@ -3,6 +3,8 @@ const router = express.Router();
 const userController = require('../controller/user.controller');
 const multer = require('multer');
 const path = require('path');
+const { authUser } = require('../modules/auth/auth');
+const followController = require('../controller/follow.controller');
 
 // Configurar multer para fotos de perfil
 const storagePerfil = multer.diskStorage({
@@ -29,14 +31,15 @@ router.post('/logout', userController.logoutUsuario);
 
 // Perfil
 router.get('/perfil', userController.getProfile);
-
-// Editar Perfil (💡 con multer)
 router.post('/perfil/editar', uploadPerfil.single('foto_perfil'), userController.editarPerfil);
-
-// Eliminar usuario
-router.post('/eliminar', userController.eliminarUsuario);
+router.post('/usuario/eliminar', userController.eliminarUsuario);
 
 // Políticas
 router.get('/privacity', userController.getPrivacidad);
+
+// Ver perfil de otros usuarios y follow/unfollow
+router.get('/usuario/:id', followController.verPerfilPublico);
+router.post('/usuario/:id/follow', authUser, followController.toggleFollow);
+
 
 module.exports = router;

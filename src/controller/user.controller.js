@@ -3,92 +3,60 @@ const UserModel = require('../modules/auth/registro');
 const { usuario: usuarioPlantilla } = require('../modules/db/objetosBD');
 const db = require('../modules/db/conection');
 
-
 // Mostrar formulario de registro
 exports.getRegister = (req, res) => {
   if (req.session.usuario) return res.redirect('/');
   res.render('register');
 };
 
-
-// Mostrar política de privacidad
+// Política de privacidad
 exports.getPrivacidad = (req, res) => {
   const usuario = req.session.usuario || null;
   res.render('privacity', { usuario });
 };
 
-
-// Mostrar formulario de login
+// Login
 exports.getLogin = (req, res) => {
   if (req.session.usuario) return res.redirect('/');
   res.render('login', { isRegister: false });
 };
 
-
-// Mostrar perfil
+// Perfil propio del usuario
 exports.getProfile = (req, res) => {
   if (!req.session.usuario) return res.redirect('/login');
 
-
   const id_usuario = req.session.usuario.id;
 
-
   const sqlUser = `
-    SELECT
-      u.id_usuario,
-      u.Nombre AS nombre,
-      u.Apellido AS apellido,
-      u.email,
-      u.password,
-      u.foto_perfil,
-      u.descripcion,
-      u.id_instrumento,
-      u.id_provincia,
-      u.es_musico,
-      i.Nombre AS instrumento_nombre,
-      p.Provincia AS provincia_nombre
+    SELECT u.id_usuario, u.Nombre AS nombre, u.Apellido AS apellido, u.email, u.password,
+           u.foto_perfil, u.descripcion, u.id_instrumento, u.id_provincia, u.es_musico,
+           i.Nombre AS instrumento_nombre, p.Provincia AS provincia_nombre
     FROM Usuario u
     LEFT JOIN Instrumento i ON u.id_instrumento = i.id_instrumento
     LEFT JOIN Provincia p ON u.id_provincia = p.id_provincia
     WHERE u.id_usuario = ?
   `;
 
-
   const sqlPub = 'SELECT * FROM Publicacion WHERE id_usuario = ? ORDER BY fecha_publicacion DESC';
   const sqlInst = 'SELECT * FROM Instrumento';
   const sqlProv = 'SELECT * FROM Provincia';
 
-
   db.query(sqlUser, [id_usuario], (err, resultUsuario) => {
     if (err || resultUsuario.length === 0) {
-      console.error('Error al obtener usuario:', err?.message);
+      console.error('❌ Error al obtener usuario:', err?.message);
       return res.status(500).send('Error al obtener usuario');
     }
 
-
     const usuario = resultUsuario[0];
 
-
     db.query(sqlPub, [id_usuario], (err, publicaciones) => {
-      if (err) {
-        console.error('Error al obtener publicaciones:', err.message);
-        return res.status(500).send('Error al obtener publicaciones');
-      }
-
+      if (err) return res.status(500).send('Error al obtener publicaciones');
 
       db.query(sqlInst, (err, instrumentos) => {
-        if (err) {
-          console.error('Error al obtener instrumentos:', err.message);
-          return res.status(500).send('Error al obtener instrumentos');
-        }
-
+        if (err) return res.status(500).send('Error al obtener instrumentos');
 
         db.query(sqlProv, (err, provincias) => {
-          if (err) {
-            console.error('Error al obtener provincias:', err.message);
-            return res.status(500).send('Error al obtener provincias');
-          }
-
+          if (err) return res.status(500).send('Error al obtener provincias');
 
           res.render('perfil', {
             usuario,
@@ -96,91 +64,60 @@ exports.getProfile = (req, res) => {
             instrumentos,
             provincias
           });
-
-
         });
       });
     });
   });
 };
 
-
-// Editar perfil (actualizado con es_musico)
+// Editar perfil
 exports.editarPerfil = (req, res) => {
   if (!req.session.usuario) return res.redirect('/login');
 
-
   const id_usuario = req.session.usuario.id;
   const { nombre, apellido, descripcion, id_instrumento, id_provincia, es_musico } = req.body;
-
-
   const nuevaFoto = req.file ? '/assets/perfil/' + req.file.filename : req.session.usuario.foto_perfil;
 
-
   const sql = `
-    UPDATE Usuario
-    SET Nombre = ?, Apellido = ?, descripcion = ?, foto_perfil = ?, id_instrumento = ?, id_provincia = ?, es_musico = ?
-    WHERE id_usuario = ?
+    UPDATE Usuario SET Nombre = ?, Apellido = ?, descripcion = ?, foto_perfil = ?,
+    id_instrumento = ?, id_provincia = ?, es_musico = ? WHERE id_usuario = ?
   `;
 
-
   db.query(sql, [
-    nombre,
-    apellido,
-    descripcion,
-    nuevaFoto,
-    id_instrumento || null,
-    id_provincia || null,
-    parseInt(es_musico) || 0,
-    id_usuario
+    nombre, apellido, descripcion, nuevaFoto,
+    id_instrumento || null, id_provincia || null,
+    parseInt(es_musico) || 0, id_usuario
   ], (err) => {
-    if (err) {
-      console.error('Error al actualizar perfil:', err.message);
-      return res.status(500).send('Error al actualizar perfil');
-    }
-
+    if (err) return res.status(500).send('Error al actualizar perfil');
 
     req.session.usuario = {
       ...req.session.usuario,
-      nombre,
-      apellido,
-      descripcion,
+      nombre, apellido, descripcion,
       foto_perfil: nuevaFoto,
-      id_instrumento,
-      id_provincia,
+      id_instrumento, id_provincia,
       es_musico: parseInt(es_musico)
     };
-
 
     res.redirect('/perfil');
   });
 };
 
-
-// Registrar usuario
+// Registro
 exports.registrarUsuario = async (req, res) => {
   const { nombre, email, apellido, password } = req.body;
   let es_musico = req.body.es_musico;
-
-
-  if (Array.isArray(es_musico)) {
-    es_musico = es_musico.includes('1') ? 1 : 0;
-  } else {
-    es_musico = parseInt(es_musico) || 0;
-  }
-
+  if (Array.isArray(es_musico)) es_musico = es_musico.includes('1') ? 1 : 0;
+  else es_musico = parseInt(es_musico) || 0;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const usuario = { ...usuarioPlantilla };
-
 
     usuario.nombre = nombre;
     usuario.apellido = apellido;
     usuario.email = email;
     usuario.password = hashedPassword;
     usuario.es_musico = es_musico;
-
 
     UserModel.create(usuario, (err) => {
       if (err) return res.status(500).send('Error al guardar');
@@ -191,46 +128,29 @@ exports.registrarUsuario = async (req, res) => {
   }
 };
 
-
 // Eliminar usuario
 exports.eliminarUsuario = (req, res) => {
   const id_usuario = req.session.usuario?.id;
   if (!id_usuario) return res.redirect('/login');
 
-
   const sql = 'DELETE FROM Usuario WHERE id_usuario = ?';
   db.query(sql, [id_usuario], (err) => {
-    if (err) {
-      console.error('Error al eliminar usuario', err.message);
-      return res.status(500).send('Error al eliminar cuenta');
-    }
-
-
+    if (err) return res.status(500).send('Error al eliminar cuenta');
     req.session.destroy(() => res.redirect('/'));
   });
 };
 
-
-// Login de usuario
+// Login
 exports.loginUsuario = (req, res) => {
   const { email, password } = req.body;
-
-
   const sql = 'SELECT * FROM Usuario WHERE email = ? LIMIT 1';
-  db.query(sql, [email], async (err, results) => {
-    if (err || results.length === 0) {
-      return res.status(401).send('Usuario no encontrado');
-    }
 
+  db.query(sql, [email], async (err, results) => {
+    if (err || results.length === 0) return res.status(401).send('Usuario no encontrado');
 
     const usuario = results[0];
     const match = await bcrypt.compare(password, usuario.password);
-
-
-    if (!match) {
-      return res.status(401).send('Contraseña incorrecta');
-    }
-
+    if (!match) return res.status(401).send('Contraseña incorrecta');
 
     req.session.usuario = {
       id: usuario.id_usuario,
@@ -244,15 +164,104 @@ exports.loginUsuario = (req, res) => {
       id_provincia: usuario.id_provincia
     };
 
-
     res.redirect('/');
   });
 };
 
-
 // Logout
 exports.logoutUsuario = (req, res) => {
-  req.session.destroy(() => {
-    res.redirect('/');
+  req.session.destroy(() => res.redirect('/'));
+};
+
+// Ver perfil público
+exports.verPerfilPublico = (req, res) => {
+  const id_usuario_visto = parseInt(req.params.id);
+  const id_usuario_logueado = req.session.usuario?.id || null;
+
+  if (!id_usuario_visto) return res.status(404).send('Usuario no válido');
+
+  const sqlUsuario = `
+    SELECT u.id_usuario, u.Nombre, u.Apellido, u.descripcion, u.foto_perfil,
+           u.es_musico, i.Nombre AS instrumento, p.Provincia AS provincia
+    FROM Usuario u
+    LEFT JOIN Instrumento i ON u.id_instrumento = i.id_instrumento
+    LEFT JOIN Provincia p ON u.id_provincia = p.id_provincia
+    WHERE u.id_usuario = ?
+  `;
+
+  const sqlPublicaciones = `
+    SELECT * FROM Publicacion
+    WHERE id_usuario = ? ORDER BY fecha_publicacion DESC
+  `;
+
+  const sqlFollowCheck = `
+    SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?
+  `;
+
+  const sqlContadores = `
+    SELECT
+      (SELECT COUNT(*) FROM Follow WHERE seguido = ?) AS seguidores,
+      (SELECT COUNT(*) FROM Follow WHERE seguidor = ?) AS siguiendo
+  `;
+
+  db.query(sqlUsuario, [id_usuario_visto], (err, usuarios) => {
+    if (err || usuarios.length === 0) return res.status(404).send('Usuario no encontrado');
+    const usuarioPerfil = usuarios[0];
+
+    db.query(sqlPublicaciones, [id_usuario_visto], (err, publicaciones) => {
+      if (err) return res.status(500).send('Error cargando publicaciones');
+
+      db.query(sqlContadores, [id_usuario_visto, id_usuario_visto], (err, contadores) => {
+        if (err) return res.status(500).send('Error cargando seguidores');
+        const { seguidores, siguiendo } = contadores[0];
+
+        if (!id_usuario_logueado || id_usuario_logueado === id_usuario_visto) {
+          return res.render('perfil_publico', {
+            usuarioPerfil,
+            publicaciones,
+            siguiendoYa: false,
+            mostrarFollow: false,
+            seguidores,
+            siguiendo,
+            usuario: req.session.usuario
+          });
+        }
+
+        db.query(sqlFollowCheck, [id_usuario_logueado, id_usuario_visto], (err, resultado) => {
+          if (err) return res.status(500).send('Error validando follow');
+
+          res.render('perfil_publico', {
+            usuarioPerfil,
+            publicaciones,
+            siguiendoYa: resultado.length > 0,
+            mostrarFollow: true,
+            seguidores,
+            siguiendo,
+            usuario: req.session.usuario
+          });
+        });
+      });
+    });
+  });
+};
+
+// Seguir / Dejar de seguir
+exports.toggleFollow = (req, res) => {
+  const seguidor = req.session.usuario?.id;
+  const seguido = parseInt(req.params.id);
+  if (!seguidor || seguidor === seguido) return res.redirect('/');
+
+  const sqlExiste = 'SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?';
+  const sqlInsert = 'INSERT INTO Follow (seguidor, seguido) VALUES (?, ?)';
+  const sqlDelete = 'DELETE FROM Follow WHERE seguidor = ? AND seguido = ?';
+
+  db.query(sqlExiste, [seguidor, seguido], (err, resultado) => {
+    if (err) return res.status(500).send('Error al procesar follow');
+
+    if (resultado.length > 0) {
+      db.query(sqlDelete, [seguidor, seguido], () => res.redirect(`/usuario/${seguido}`));
+    } else {
+      db.query(sqlInsert, [seguidor, seguido], () => res.redirect(`/usuario/${seguido}`));
+    }
   });
 };

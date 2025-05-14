@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= usuarioPerfil.Nombre %> - Perfil público | MusicVibe</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-r from-red-600 to-pink-700 text-white min-h-screen">
+  <%- include('partials/_navbar') %>
+
+  <main class="container mx-auto px-4 py-10">
+    <!-- Info principal del perfil -->
+    <section class="bg-white rounded-xl shadow-md p-6 mb-8 text-gray-900">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-6">
+        <img src="<%= usuarioPerfil.foto_perfil || '/assets/img/default-profile.png' %>" alt="Foto perfil"
+             class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-pink-500">
+        <div class="flex-1">
+          <h1 class="text-2xl font-bold text-pink-700"><%= usuarioPerfil.Nombre %> <%= usuarioPerfil.Apellido %></h1>
+          <% if (usuarioPerfil.descripcion) { %>
+            <p class="mt-2 text-sm text-gray-600"><%= usuarioPerfil.descripcion %></p>
+          <% } %>
+          <p class="mt-1 text-sm">🎵 <%= usuarioPerfil.instrumento || 'Sin instrumento' %></p>
+          <p class="text-sm">📍 <%= usuarioPerfil.provincia || 'Sin provincia' %></p>
+          <p class="text-sm mt-1">
+            <strong><%= seguidores %></strong> seguidores · <strong><%= siguiendo %></strong> siguiendo
+          </p>
+
+          <% if (mostrarFollow) { %>
+            <form action="/usuario/<%= usuarioPerfil.id_usuario %>/follow" method="POST" class="mt-3">
+              <button type="submit"
+                      class="bg-pink-600 hover:bg-pink-500 text-white font-semibold px-4 py-2 rounded shadow">
+                <%= siguiendoYa ? 'Dejar de seguir' : 'Seguir' %>
+              </button>
+            </form>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+    <!-- Publicaciones -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Publicaciones</h2>
+
+      <% if (publicaciones.length === 0) { %>
+        <p class="text-gray-200">Este usuario aún no ha publicado nada.</p>
+      <% } %>
+
+      <div class="grid gap-6">
+        <% publicaciones.forEach(pub => { %>
+          <article class="bg-white text-gray-900 rounded-xl shadow p-4 border-l-4 border-pink-400">
+            <p class="text-sm text-gray-700 mb-2">
+              <%= new Date(pub.fecha_publicacion).toLocaleDateString('es-ES') %>
+            </p>
+            <% if (pub.foto) { %>
+              <img src="<%= pub.foto %>" alt="Imagen de publicación"
+                   class="w-full rounded-md mb-3 object-contain max-h-[500px] border border-gray-200" />
+            <% } %>
+            <div class="text-sm whitespace-pre-line text-gray-800">
+              <%- pub.contenido %>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/_footer') %>
+</body>
+</html>
