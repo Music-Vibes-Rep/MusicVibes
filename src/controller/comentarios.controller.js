@@ -34,7 +34,7 @@ exports.registrarComentario = async (req, res) => {
 
 //Eliminar comentarios
 exports.eliminarComentario = (req, res) => {
-  const { id_comentario } = req.params;
+  const { id_comentario } = req.body; // ✅ CAMBIADO: de params → body
   const id_usuario = req.session.usuario.id;
 
   const sql = 'DELETE FROM Comentario WHERE id_comentario = ? AND id_usuario = ?';
@@ -47,6 +47,7 @@ exports.eliminarComentario = (req, res) => {
     res.redirect('/feed');
   });
 };
+
 
 // Mostrar comentarios
 exports.getComentario = (req, res) => {
