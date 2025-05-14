@@ -23,12 +23,9 @@
 <body class="bg-gray-50 min-h-screen pt-20">
   <%- include('partials/_navbar') %>
 
-
     <div class="max-w-7xl mx-auto px-4">
-      <!-- Tabs estilo navegador -->
       <div
         class="flex flex-col md:flex-row md:justify-between md:items-center border-b border-gray-300 mb-6 space-y-3 md:space-y-0">
-        <!-- Tabs navegables con scroll en móvil -->
         <div class="flex overflow-x-auto md:overflow-visible space-x-4 pb-2 md:pb-0">
           <button id="btn-tab-perfil"
             class="tab-btn flex-shrink-0 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600 whitespace-nowrap"
@@ -41,11 +38,8 @@
             onclick="cambiarTab('tab-editar')">Editar perfil</button>
         </div>
 
-
-        <!-- Acciones de sesión -->
         <div
           class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 md:space-x-6 mt-4">
-          <!-- Botón cerrar sesión -->
           <form action="/logout" method="POST">
             <button type="submit"
               class="text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 px-4 py-1 rounded transition">
@@ -57,13 +51,8 @@
 
       </div>
 
-
-
-
-      <!-- Contenido: PERFIL -->
       <div id="tab-perfil" class="tab-content bg-white p-8 rounded-xl shadow-md">
         <div class="flex flex-col items-center space-y-4">
-          <!-- Foto de perfil -->
           <div class="w-40 h-40 relative">
               <img src="<%= usuario.foto_perfil ? usuario.foto_perfil : '/assets/img/default-profile.png' %>"
                 alt="Foto de perfil"
@@ -105,7 +94,6 @@
         </div>
 
 
-        <!-- Últimas publicaciones -->
         <% if (publicacion && publicacion.length> 0) { %>
           <div class="mt-12">
             <h3 class="text-2xl font-bold text-gray-800 mb-4">Últimas publicaciones</h3>
@@ -128,10 +116,6 @@
           <% } %>
       </div>
 
-
-
-
-      <!-- Contenido: PUBLICACIONES -->
       <div id="tab-publicaciones" class="tab-content hidden bg-white p-8 rounded-xl shadow-sm">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-bold text-gray-800">Mis publicaciones</h2>
@@ -164,85 +148,83 @@
       </div>
 
 
-      <!-- Contenido: EDITAR PERFIL -->
       <div id="tab-editar" class="tab-content hidden bg-white p-8 rounded-xl shadow-sm">
-  <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar perfil</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar perfil</h2>
 
-  <form method="POST" action="/perfil/editar" enctype="multipart/form-data" class="space-y-6">
+        <form method="POST" action="/perfil/editar" enctype="multipart/form-data" class="space-y-6">
 
-    <div class="grid md:grid-cols-2 gap-4">
-      <div>
-        <label class="block font-medium text-gray-700">Nombre</label>
-        <input type="text" name="nombre" value="<%= usuario.nombre %>"
-          class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400" required>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-medium text-gray-700">Nombre</label>
+              <input type="text" name="nombre" value="<%= usuario.nombre %>"
+                class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400" required>
+            </div>
+            <div>
+              <label class="block font-medium text-gray-700">Apellido</label>
+              <input type="text" name="apellido" value="<%= usuario.apellido %>"
+                class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-medium text-gray-700">Descripción</label>
+            <textarea name="descripcion" rows="3"
+              class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400"><%= usuario.descripcion || '' %></textarea>
+          </div>
+
+          <div>
+            <label class="block font-medium text-gray-700">¿Eres músico?</label>
+            <select name="es_musico"
+              class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <option value="1" <%=usuario.es_musico==1 ? 'selected' : '' %>>Sí</option>
+              <option value="0" <%=usuario.es_musico==0 ? 'selected' : '' %>>No</option>
+            </select>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-medium text-gray-700">Instrumento</label>
+              <select name="id_instrumento"
+                class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+                <% instrumentos.forEach(inst=> { %>
+                  <option value="<%= inst.id_instrumento %>" <%=usuario.id_instrumento==inst.id_instrumento ? 'selected' : '' %>><%= inst.Nombre %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium text-gray-700">Provincia</label>
+              <select name="id_provincia"
+                class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+                <% provincias.forEach(p=> { %>
+                  <option value="<%= p.id_provincia %>" <%=usuario.id_provincia==p.id_provincia ? 'selected' : '' %>><%= p.Provincia %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-medium text-gray-700">Foto de perfil</label>
+            <input type="file" name="foto_perfil" accept="image/*" class="block mt-1">
+          </div>
+
+          <div class="flex justify-center items-center pt-4">
+            <button type="submit"
+              class="bg-pink-600 text-white px-6 py-2 rounded-md hover:bg-pink-700 transition">
+              Guardar cambios
+            </button>
+          </div>
+        </form>
+
+        <div class="pt-4 flex justify-center items-center">
+          <form action="/eliminar" method="POST"
+            onsubmit="return confirm('¿Estás seguro de que deseas eliminar tu perfil? Esta acción no se puede deshacer.')">
+            <button type="submit"
+              class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition">
+              Eliminar perfil
+            </button>
+          </form>
+        </div>
       </div>
-      <div>
-        <label class="block font-medium text-gray-700">Apellido</label>
-        <input type="text" name="apellido" value="<%= usuario.apellido %>"
-          class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400" required>
-      </div>
-    </div>
-
-    <div>
-      <label class="block font-medium text-gray-700">Descripción</label>
-      <textarea name="descripcion" rows="3"
-        class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400"><%= usuario.descripcion || '' %></textarea>
-    </div>
-
-    <div>
-      <label class="block font-medium text-gray-700">¿Eres músico?</label>
-      <select name="es_musico"
-        class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
-        <option value="1" <%=usuario.es_musico==1 ? 'selected' : '' %>>Sí</option>
-        <option value="0" <%=usuario.es_musico==0 ? 'selected' : '' %>>No</option>
-      </select>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-4">
-      <div>
-        <label class="block font-medium text-gray-700">Instrumento</label>
-        <select name="id_instrumento"
-          class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
-          <% instrumentos.forEach(inst=> { %>
-            <option value="<%= inst.id_instrumento %>" <%=usuario.id_instrumento==inst.id_instrumento ? 'selected' : '' %>><%= inst.Nombre %></option>
-          <% }) %>
-        </select>
-      </div>
-      <div>
-        <label class="block font-medium text-gray-700">Provincia</label>
-        <select name="id_provincia"
-          class="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
-          <% provincias.forEach(p=> { %>
-            <option value="<%= p.id_provincia %>" <%=usuario.id_provincia==p.id_provincia ? 'selected' : '' %>><%= p.Provincia %></option>
-          <% }) %>
-        </select>
-      </div>
-    </div>
-
-    <div>
-      <label class="block font-medium text-gray-700">Foto de perfil</label>
-      <input type="file" name="foto_perfil" accept="image/*" class="block mt-1">
-    </div>
-
-    <!-- Botones alineados horizontalmente -->
-    <div class="flex justify-center items-center pt-4">
-      <button type="submit"
-        class="bg-pink-600 text-white px-6 py-2 rounded-md hover:bg-pink-700 transition">
-        Guardar cambios
-      </button>
-    </div>
-  </form>
-
-  <div class="pt-4 flex justify-center items-center">
-    <form action="/eliminar" method="POST"
-      onsubmit="return confirm('⚠️ ¿Estás seguro de que deseas eliminar tu perfil? Esta acción no se puede deshacer.')">
-      <button type="submit"
-        class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition">
-        🗑️ Eliminar perfil
-      </button>
-    </form>
-  </div>
-</div>
 
 
 
