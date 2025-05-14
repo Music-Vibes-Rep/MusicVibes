@@ -16,6 +16,11 @@
       document.getElementById('btn-' + tabId).classList.add('bg-white', 'text-pink-600', 'border-t', 'border-l', 'border-r', 'rounded-t-md');
     }
   </script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #fda4af, #ffffff, #fbcfe8);
+    }
+  </style>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
@@ -97,20 +102,29 @@
         <% if (publicacion && publicacion.length> 0) { %>
           <div class="mt-12">
             <h3 class="text-2xl font-bold text-gray-800 mb-4">Últimas publicaciones</h3>
-            <div class="grid md:grid-cols-2 gap-6">
-              <% publicacion.slice(0, 2).forEach(publi=> { %>
-                <div class="bg-white border rounded-lg shadow-sm p-4">
-                  <% if (publi.foto) { %>
-                    <img src="<%= publi.foto %>" class="w-full h-40 object-cover rounded mb-2" alt="">
-                    <% } %>
-                      <h4 class="text-lg font-semibold text-gray-700 mb-1">
-                        <%= publi.titulo %>
-                      </h4>
-                      <p class="text-sm text-gray-600">
-                        <%= publi.contenido %>
-                      </p>
-                </div>
-                <% }) %>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% publicacion.forEach(pub => { %>
+                <article class="bg-white text-gray-900 rounded-xl shadow overflow-hidden flex flex-col">
+                  <% if (pub.foto) { %>
+                    <div class="w-full aspect-square bg-gray-100 overflow-hidden">
+                      <img src="<%= pub.foto %>" alt="Imagen de publicación"
+                          class="w-full h-full object-cover">
+                    </div>
+                    <% } else { %>
+                    <div class="bg-gray-300 w-full h-60 flex items-center justify-center text-gray-500">
+                      Sin imagen
+                    </div>
+                  <% } %>
+                  <div class="p-4 flex flex-col justify-between flex-1">
+                    <p class="text-xs text-gray-500 mb-2">
+                      <%= new Date(pub.fecha_publicacion).toLocaleDateString('es-ES') %>
+                    </p>
+                    <div class="text-sm whitespace-pre-line text-gray-800">
+                      <%- pub.contenido %>
+                    </div>
+                  </div>
+                </article>
+              <% }) %>
             </div>
           </div>
           <% } %>

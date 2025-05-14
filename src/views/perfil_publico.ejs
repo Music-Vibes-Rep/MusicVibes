@@ -68,6 +68,10 @@
                   <img src="<%= pub.foto %>" alt="Imagen de publicación"
                       class="w-full h-full object-cover">
                 </div>
+                <% } else { %>
+                    <div class="bg-gray-300 w-full h-60 flex items-center justify-center text-gray-500">
+                      Sin imagen
+                    </div>
               <% } %>
               <div class="p-4 flex flex-col justify-between flex-1">
                 <p class="text-xs text-gray-500 mb-2">
