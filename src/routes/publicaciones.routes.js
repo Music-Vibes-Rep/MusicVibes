@@ -6,31 +6,31 @@ const upload = require('../modules/publicaciones/subirIMG');
 const { authUser } = require('../modules/auth/auth');
 
 
-// Mostrar formulario para crear una nueva publicación
+//formulario para crear una nueva publicacion
 router.get('/publicacion', authUser, publicacionController.getRegisterPublicacion);
 
 
-// Guardar nueva publicación
+// Guardar publicación
 router.post('/publicar', authUser, upload.single('imagen'), publicacionController.registrarPublicacion);
 
 
-// Mostrar formulario para editar publicación existente
+// Mostrar formulario para editar 
 router.get('/publicaciones/:id/editar', authUser, publicacionController.getEditarPublicacion);
 
 
-// Guardar cambios de la edición
+// Guardar cambios edicion
 router.post('/publicaciones/:id/editar', authUser, upload.single('imagen'), publicacionController.editarPublicacion);
 
 
-// Eliminar publicación
+// Eliminar publi
 router.post('/publicaciones/:id/eliminar', authUser, publicacionController.eliminarPublicacion);
 
 
-// Comentarios (agregar)
+// Agregar Comentarios 
 router.post('/comentar', authUser, comentarioController.registrarComentario);
 
 
-// Comentarios (eliminar si tuvieras lógica de eliminación por usuario)
+// eliminar comentrairo
 router.post('/comentario/eliminar', authUser, comentarioController.eliminarComentario);
 
 

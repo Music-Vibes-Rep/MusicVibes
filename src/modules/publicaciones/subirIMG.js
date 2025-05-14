@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
   }
 });
 
-// Validar solo imágenes
+// Validar solo imagenes
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());

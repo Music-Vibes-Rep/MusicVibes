@@ -1,3 +1,5 @@
+//vamos a crear eventos ficticios, pendiente crear api que recoja directamente
+
 const eventosMock = [
   {
     titulo: 'David Guetta en Madrid',

@@ -3,6 +3,51 @@ const UserModel = require('../modules/auth/registro');
 const { usuario: usuarioPlantilla } = require('../modules/db/objetosBD');
 const db = require('../modules/db/conection');
 
+//queries
+
+const sqlUser = `
+    SELECT u.id_usuario, u.Nombre AS nombre, u.Apellido AS apellido, u.email, u.password,
+           u.foto_perfil, u.descripcion, u.id_instrumento, u.id_provincia, u.es_musico,
+           i.Nombre AS instrumento_nombre, p.Provincia AS provincia_nombre
+    FROM Usuario u
+    LEFT JOIN Instrumento i ON u.id_instrumento = i.id_instrumento
+    LEFT JOIN Provincia p ON u.id_provincia = p.id_provincia
+    WHERE u.id_usuario = ?
+  `;
+
+const sqlPub = 'SELECT * FROM Publicacion WHERE id_usuario = ? ORDER BY fecha_publicacion DESC';
+const sqlInst = 'SELECT * FROM Instrumento';
+const sqlProv = 'SELECT * FROM Provincia';
+
+const sqlUsuario = `
+    SELECT u.id_usuario, u.Nombre, u.Apellido, u.descripcion, u.foto_perfil,
+           u.es_musico, i.Nombre AS instrumento, p.Provincia AS provincia
+    FROM Usuario u
+    LEFT JOIN Instrumento i ON u.id_instrumento = i.id_instrumento
+    LEFT JOIN Provincia p ON u.id_provincia = p.id_provincia
+    WHERE u.id_usuario = ?
+  `;
+
+const sqlPublicaciones = `
+    SELECT * FROM Publicacion
+    WHERE id_usuario = ? ORDER BY fecha_publicacion DESC
+  `;
+
+const sqlFollowCheck = `
+    SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?
+  `;
+
+const sqlContadores = `
+    SELECT
+      (SELECT COUNT(*) FROM Follow WHERE seguido = ?) AS seguidores,
+      (SELECT COUNT(*) FROM Follow WHERE seguidor = ?) AS siguiendo
+  `;
+const sqlExiste = 'SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?';
+const sqlInsert = 'INSERT INTO Follow (seguidor, seguido) VALUES (?, ?)';
+const sqlDelete = 'DELETE FROM Follow WHERE seguidor = ? AND seguido = ?';
+
+
+
 // Mostrar formulario de registro
 exports.getRegister = (req, res) => {
   if (req.session.usuario) return res.redirect('/');
@@ -27,23 +72,11 @@ exports.getProfile = (req, res) => {
 
   const id_usuario = req.session.usuario.id;
 
-  const sqlUser = `
-    SELECT u.id_usuario, u.Nombre AS nombre, u.Apellido AS apellido, u.email, u.password,
-           u.foto_perfil, u.descripcion, u.id_instrumento, u.id_provincia, u.es_musico,
-           i.Nombre AS instrumento_nombre, p.Provincia AS provincia_nombre
-    FROM Usuario u
-    LEFT JOIN Instrumento i ON u.id_instrumento = i.id_instrumento
-    LEFT JOIN Provincia p ON u.id_provincia = p.id_provincia
-    WHERE u.id_usuario = ?
-  `;
-
-  const sqlPub = 'SELECT * FROM Publicacion WHERE id_usuario = ? ORDER BY fecha_publicacion DESC';
-  const sqlInst = 'SELECT * FROM Instrumento';
-  const sqlProv = 'SELECT * FROM Provincia';
+ 
 
   db.query(sqlUser, [id_usuario], (err, resultUsuario) => {
     if (err || resultUsuario.length === 0) {
-      console.error('❌ Error al obtener usuario:', err?.message);
+      console.error('Error al obtener usuario:', err?.message);
       return res.status(500).send('Error al obtener usuario');
     }
 
@@ -180,30 +213,6 @@ exports.verPerfilPublico = (req, res) => {
 
   if (!id_usuario_visto) return res.status(404).send('Usuario no válido');
 
-  const sqlUsuario = `
-    SELECT u.id_usuario, u.Nombre, u.Apellido, u.descripcion, u.foto_perfil,
-           u.es_musico, i.Nombre AS instrumento, p.Provincia AS provincia
-    FROM Usuario u
-    LEFT JOIN Instrumento i ON u.id_instrumento = i.id_instrumento
-    LEFT JOIN Provincia p ON u.id_provincia = p.id_provincia
-    WHERE u.id_usuario = ?
-  `;
-
-  const sqlPublicaciones = `
-    SELECT * FROM Publicacion
-    WHERE id_usuario = ? ORDER BY fecha_publicacion DESC
-  `;
-
-  const sqlFollowCheck = `
-    SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?
-  `;
-
-  const sqlContadores = `
-    SELECT
-      (SELECT COUNT(*) FROM Follow WHERE seguido = ?) AS seguidores,
-      (SELECT COUNT(*) FROM Follow WHERE seguidor = ?) AS siguiendo
-  `;
-
   db.query(sqlUsuario, [id_usuario_visto], (err, usuarios) => {
     if (err || usuarios.length === 0) return res.status(404).send('Usuario no encontrado');
     const usuarioPerfil = usuarios[0];
@@ -251,9 +260,6 @@ exports.toggleFollow = (req, res) => {
   const seguido = parseInt(req.params.id);
   if (!seguidor || seguidor === seguido) return res.redirect('/');
 
-  const sqlExiste = 'SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?';
-  const sqlInsert = 'INSERT INTO Follow (seguidor, seguido) VALUES (?, ?)';
-  const sqlDelete = 'DELETE FROM Follow WHERE seguidor = ? AND seguido = ?';
 
   db.query(sqlExiste, [seguidor, seguido], (err, resultado) => {
     if (err) return res.status(500).send('Error al procesar follow');

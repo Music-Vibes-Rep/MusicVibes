@@ -34,14 +34,14 @@ exports.registrarComentario = async (req, res) => {
 
 //Eliminar comentarios
 exports.eliminarComentario = (req, res) => {
-  const { id_comentario } = req.body; // ✅ CAMBIADO: de params → body
+  const { id_comentario } = req.body;
   const id_usuario = req.session.usuario.id;
 
   const sql = 'DELETE FROM Comentario WHERE id_comentario = ? AND id_usuario = ?';
 
   db.query(sql, [id_comentario, id_usuario], (err) => {
     if (err) {
-      console.error('❌ Error al eliminar comentario:', err.message);
+      console.error('Error al eliminar comentario:', err.message);
       return res.status(500).send('Error al eliminar comentario');
     }
     res.redirect('/feed');

@@ -16,7 +16,7 @@ router.post('/like', (req, res) => {
     if (err) return res.status(500).send('Error al verificar like');
 
     if (rows.length === 0) {
-      // Insertar like
+      // Dar like
       db.query(insertSql, [id_usuario, id_publicacion], () => res.redirect('back'));
     } else {
       // Quitar like

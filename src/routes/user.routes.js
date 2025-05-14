@@ -34,10 +34,10 @@ router.get('/perfil', userController.getProfile);
 router.post('/perfil/editar', uploadPerfil.single('foto_perfil'), userController.editarPerfil);
 router.post('/usuario/eliminar', userController.eliminarUsuario);
 
-// Políticas
+// Politicas
 router.get('/privacity', userController.getPrivacidad);
 
-// Ver perfil de otros usuarios y follow/unfollow
+// perfil de otros usuarios follow/unfollow
 router.get('/usuario/:id', followController.verPerfilPublico);
 router.post('/usuario/:id/follow', authUser, followController.toggleFollow);
 

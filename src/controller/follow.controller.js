@@ -1,14 +1,12 @@
 // src/controller/follow.controller.js
 const db = require('../modules/db/conection');
 
-exports.verPerfilPublico = (req, res) => {
-  const id_usuario_visto = parseInt(req.params.id);
-  const id_usuario_logueado = req.session.usuario?.id || null;
+//queries
+const sqlInsert = 'INSERT INTO Follow (seguidor, seguido) VALUES (?, ?)';
+const sqlDelete = 'DELETE FROM Follow WHERE seguidor = ? AND seguido = ?';
 
-  if (!id_usuario_visto) return res.status(404).send('Usuario no válido');
-
-  const sqlUsuario = `
-    SELECT u.id_usuario, u.Nombre, u.Apellido, u.descripcion, u.foto_perfil,
+const sqlExiste = 'SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?';
+const sqlUsuario = `SELECT u.id_usuario, u.Nombre, u.Apellido, u.descripcion, u.foto_perfil,
            u.es_musico, i.Nombre AS instrumento, p.Provincia AS provincia
     FROM Usuario u
     LEFT JOIN Instrumento i ON u.id_instrumento = i.id_instrumento
@@ -16,21 +14,28 @@ exports.verPerfilPublico = (req, res) => {
     WHERE u.id_usuario = ?
   `;
 
-  const sqlPublicaciones = `
+const sqlPublicaciones = `
     SELECT * FROM Publicacion
     WHERE id_usuario = ? ORDER BY fecha_publicacion DESC
   `;
 
-  const sqlFollowCheck = `
+const sqlFollowCheck = `
     SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?
   `;
 
-  const sqlContadores = `
+const sqlContadores = `
     SELECT
       (SELECT COUNT(*) FROM Follow WHERE seguido = ?) AS seguidores,
       (SELECT COUNT(*) FROM Follow WHERE seguidor = ?) AS siguiendo
   `;
 
+exports.verPerfilPublico = (req, res) => {
+  const id_usuario_visto = parseInt(req.params.id);
+  const id_usuario_logueado = req.session.usuario?.id || null;
+
+  if (!id_usuario_visto) return res.status(404).send('Usuario no válido');
+
+  
   db.query(sqlUsuario, [id_usuario_visto], (err, usuarios) => {
     if (err || usuarios.length === 0) return res.status(404).send('Usuario no encontrado');
     const usuarioPerfil = usuarios[0];
@@ -77,9 +82,7 @@ exports.toggleFollow = (req, res) => {
   const seguido = parseInt(req.params.id);
   if (!seguidor || seguidor === seguido) return res.redirect('/');
 
-  const sqlExiste = 'SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?';
-  const sqlInsert = 'INSERT INTO Follow (seguidor, seguido) VALUES (?, ?)';
-  const sqlDelete = 'DELETE FROM Follow WHERE seguidor = ? AND seguido = ?';
+
 
   db.query(sqlExiste, [seguidor, seguido], (err, resultado) => {
     if (err) return res.status(500).send('Error al procesar follow');

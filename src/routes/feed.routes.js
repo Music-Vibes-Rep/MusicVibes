@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
       console.error('Error al obtener publicaciones:', err.message);
       publicaciones = [];
     }
-
+//redireccion de usuario en caso de fallo
     res.render('landing', {
       usuario: req.session.usuario,
       publicaciones,
