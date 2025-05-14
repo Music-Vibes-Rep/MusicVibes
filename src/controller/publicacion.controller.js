@@ -1,6 +1,7 @@
 const { publicacion: publicacionPlantilla } = require('../modules/db/objetosBD');
 const db = require('../modules/db/conection');
 const path = require('path');
+const sanitizeHtml = require('sanitize-html');
 
 // Crear nueva publicación
 exports.registrarPublicacion = async (req, res) => {
@@ -8,8 +9,18 @@ exports.registrarPublicacion = async (req, res) => {
   const id_usuario = req.session.usuario.id;
   const imagen = req.file ? `/assets/publicaciones/${req.file.filename}` : null;
 
+  const contenidoSanitizado = sanitizeHtml(contenido, {
+    allowedTags: ['b', 'i', 'em', 'strong', 'a', 'br', 'iframe'],
+    allowedAttributes: {
+      a: ['href', 'target', 'rel'],
+      iframe: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen']
+    },
+    allowIframeRelativeUrls: true,
+    allowedSchemes: ['http', 'https']
+  });
+
   const publicacion = { ...publicacionPlantilla };
-  publicacion.contenido = contenido;
+  publicacion.contenido = contenidoSanitizado;
   publicacion.foto = imagen;
   publicacion.id_usuario = id_usuario;
 
@@ -66,7 +77,17 @@ exports.editarPublicacion = (req, res) => {
       fotoFinal = nuevaImagen;
     }
 
-    db.query(sqlUpdate, [contenido, fotoFinal, id, req.session.usuario.id], (err) => {
+    const contenidoSanitizado = sanitizeHtml(contenido, {
+      allowedTags: ['b', 'i', 'em', 'strong', 'a', 'br', 'iframe'],
+      allowedAttributes: {
+        a: ['href', 'target', 'rel'],
+        iframe: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen']
+      },
+      allowIframeRelativeUrls: true,
+      allowedSchemes: ['http', 'https']
+    });
+
+    db.query(sqlUpdate, [contenidoSanitizado, fotoFinal, id, req.session.usuario.id], (err) => {
       if (err) {
         console.error('❌ Error al actualizar publicación:', err.message);
         return res.status(500).send('Error al actualizar publicación');
