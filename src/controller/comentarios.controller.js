@@ -10,27 +10,33 @@ const eliminar = 'DELETE FROM Comentario WHERE id_usuario = ?';
 // Registrar comentarios
 exports.registrarComentario = async (req, res) => {
   const { contenido, id_publicacion } = req.body;
-  const id_usuario = req.session.usuario.id;
+  const id_usuario = req.session.usuario?.id;
 
-  try {
-    const nuevoComentario = { ...comentarioPlantilla };
-    nuevoComentario.comentario = contenido;
-    nuevoComentario.id_publicacion = id_publicacion;
-    nuevoComentario.id_usuario = id_usuario;
+  if (!id_usuario) return res.status(401).json({ error: 'No autenticado' });
 
-    db.query(guardar, [nuevoComentario.comentario, nuevoComentario.id_usuario, nuevoComentario.id_publicacion], (err) => {
-      if (err) {
-        console.error('Error para comentar:', err.message);
-        return res.status(500).send('Error al comentar la publicación');
-      }
-      res.redirect('/feed');
+  const sql = `
+    INSERT INTO Comentario (Comentario, id_usuario, id_publicacion)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(sql, [contenido, id_usuario, id_publicacion], (err, result) => {
+    if (err) return res.status(500).json({ error: 'Error al comentar' });
+
+    const id_comentario = result.insertId;
+    const sqlObtener = `
+      SELECT c.*, u.Nombre AS nombre_usuario
+      FROM Comentario c
+      JOIN Usuario u ON c.id_usuario = u.id_usuario
+      WHERE c.id_comentario = ?
+    `;
+
+    db.query(sqlObtener, [id_comentario], (err2, rows) => {
+      if (err2 || rows.length === 0) return res.status(500).json({ error: 'Error al devolver comentario' });
+
+      res.json(rows[0]);
     });
-
-  } catch (err) {
-    console.error('Error interno del servidor:', err);
-    res.status(500).send('Error interno del servidor');
-  }
-};
+  });
+}
 
 //Eliminar comentarios
 exports.eliminarComentario = (req, res) => {

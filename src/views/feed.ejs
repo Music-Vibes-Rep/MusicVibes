@@ -81,28 +81,25 @@
                 <!-- Interacciones -->
                 <div class="mt-4 bg-gray-100 p-4 rounded-lg shadow-inner space-y-4">
                   <!-- Likes -->
-                  <button type="button" onclick="darLike('<%= pub.id_publicacion %>')"
-                    class="flex items-center gap-2 group"
-                    id="like-btn-<%= pub.id_publicacion %>">
+                  <button type="button" onclick="darLike('<%= pub.id_publicacion %>')" class="group flex items-center gap-1" id="like-btn-<%= pub.id_publicacion %>">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                      class="w-6 h-6 transition duration-200 transform group-hover:scale-110 <%= pub.usuarioDioLike ? 'text-pink-600' : 'text-gray-400' %>"
-                      fill="<%= pub.usuarioDioLike ? 'currentColor' : 'none' %>"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2">
+                      class="w-6 h-6 transition-transform duration-200 group-hover:scale-110 <%= pub.usuarioDioLike ? 'text-pink-600' : 'text-gray-400' %>"
+                      fill="<%= pub.usuarioDioLike ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round"
                         d="M12 21C12 21 4.5 14.5 4.5 9.5C4.5 6.5 7 4 9.5 4C11 4 12 5 12 5C12 5 13 4 14.5 4C17 4 19.5 6.5 19.5 9.5C19.5 14.5 12 21 12 21Z" />
                     </svg>
-                    <span id="like-count-<%= pub.id_publicacion %>">Vibras (<%= pub.totalLikes %>)</span>
+                    <span id="like-count-<%= pub.id_publicacion %>" class="text-sm font-semibold text-pink-800">
+                      <%= pub.totalLikes %> <span class="hidden sm:inline">Vibras</span>
+                    </span>
                   </button>
-
-
 
                   <!-- Comentarios -->
-                  <button type="button" onclick="toggleComentarios('<%= pub.id_publicacion %>')"
+                  <button type="button" id="comentario-boton-<%= pub.id_publicacion %>" onclick="toggleComentarios('<%= pub.id_publicacion %>')"
                     class="text-sm text-pink-700 font-semibold hover:underline flex items-center gap-1">
-                    Comentarios (<%= pub.comentarios.length %>) <span id="flecha-<%= pub.id_publicacion %>">▼</span>
+                    Comentarios (<span id="comentario-contador-<%= pub.id_publicacion %>"><%= pub.comentarios.length %></span>) 
+                    <span id="flecha-<%= pub.id_publicacion %>">▼</span>
                   </button>
+
 
                   <div id="comentarios-<%= pub.id_publicacion %>" class="space-y-3" style="display: none;">
                     <% pub.comentarios.forEach(com=> { %>
@@ -135,9 +132,9 @@
                   </div>
 
                   <!-- Comentar -->
-                  <form action="/comentar" method="POST" class="space-y-2">
+                  <form onsubmit="enviarComentario(event, '<%= pub.id_publicacion %>')" class="space-y-2">
                     <input type="hidden" name="id_publicacion" value="<%= pub.id_publicacion %>">
-                    <textarea name="contenido" rows="2" required
+                    <textarea id="comentario-<%= pub.id_publicacion %>" rows="2" required
                       class="w-full p-2 border rounded-md resize-none text-sm text-gray-900"
                       placeholder="Escribe un comentario..."></textarea>
                     <button type="submit"
@@ -145,6 +142,7 @@
                       Comentar
                     </button>
                   </form>
+
                 </div>
           </article>
           <% }) %>
@@ -201,6 +199,50 @@
             }
           } catch (err) {
             console.error('Error al procesar el like:', err);
+          }
+        }
+
+        async function enviarComentario(e, idPublicacion) {
+          e.preventDefault();
+
+          const textarea = document.getElementById(`comentario-${idPublicacion}`);
+          const contenido = textarea.value.trim();
+
+          if (!contenido) return;
+
+          const res = await fetch('/comentar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_publicacion: idPublicacion, contenido })
+          });
+
+          const data = await res.json();
+          if (res.ok && data && data.nombre_usuario) {
+            const nuevoComentario = document.createElement('div');
+            nuevoComentario.className = "bg-white p-3 rounded-md shadow flex justify-between items-start border border-gray-200";
+            nuevoComentario.innerHTML = `
+              <div>
+                <strong class="text-red-600">
+                  <a href="/usuario/${data.id_usuario}" class="hover:underline">${data.nombre_usuario}</a>
+                </strong>
+                <p class="text-sm text-gray-800 mt-1">${data.Comentario}</p>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-gray-500 block">${new Date(data.fecha_comentario).toLocaleDateString('es-ES')}</span>
+              </div>
+            `;
+
+            const lista = document.getElementById(`comentarios-${idPublicacion}`);
+            lista.appendChild(nuevoComentario);
+            lista.style.display = 'block';
+
+            const contador = document.getElementById(`comentario-contador-${idPublicacion}`);
+            const actual = parseInt(contador.textContent);
+            contador.textContent = actual + 1;
+
+            textarea.value = '';
+          } else {
+            alert('Error al comentar.');
           }
         }
 
