@@ -31,14 +31,14 @@ exports.registrarPublicacion = async (req, res) => {
   const sql = "INSERT INTO Publicacion (contenido, foto, id_usuario) VALUES (?, ?, ?)";
   db.query(sql, [publicacion.contenido, publicacion.foto, publicacion.id_usuario], (err) => {
     if (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Error al guardar publicación",
+      console.error('Error al guardar publicación:', err.message);
+      return res.render('error', {
+        error: 'Error al guardar la publicación. Por favor, inténtalo de nuevo.',
+        redirectFeed: '/feed',
+        redirectPerfil: '/perfil'
       });
-      //console.error('Error al guardar publicación:', err.message);
-      return res.status(500).send('Error al guardar publicación');
     }
+
     res.redirect('/feed');
   });
 };
@@ -55,15 +55,14 @@ exports.getEditarPublicacion = (req, res) => {
 
   db.query(sql, [id, req.session.usuario.id], (err, results) => {
     if (err || results.length === 0) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Error al buscar publicación para editar",
-      });
       console.error('Error al buscar publicación para editar:', err?.message);
-      return res.status(404).send('Publicación no encontrada');
+      return res.render('error', {
+        error: 'Publicación no encontrada o no tienes permisos para editarla.',
+        redirectFeed: '/feed',
+        redirectPerfil: '/perfil'
+      });
     }
-
+    
     res.render('publicacion', { publicacion: results[0] });
   });
 };
@@ -79,8 +78,13 @@ exports.editarPublicacion = (req, res) => {
   db.query(sqlSelect, [id, req.session.usuario.id], (err, results) => {
     if (err || results.length === 0) {
       console.error('Error al obtener publicación:', err?.message);
-      return res.status(404).send('Publicación no encontrada');
+      return res.render('error', {
+        error: 'Publicación no encontrada o no tienes permisos para editarla.',
+        redirectFeed: '/feed',
+        redirectPerfil: '/perfil'
+      });
     }
+
 
     let fotoFinal = results[0].foto;
 
@@ -103,8 +107,13 @@ exports.editarPublicacion = (req, res) => {
     db.query(sqlUpdate, [contenidoSanitizado, fotoFinal, id, req.session.usuario.id], (err) => {
       if (err) {
         console.error('Error al actualizar publicación:', err.message);
-        return res.status(500).send('Error al actualizar publicación');
+        return res.render('error', {
+          error: 'Error al actualizar la publicación. Por favor, inténtalo de nuevo.',
+          redirectFeed: '/feed',
+          redirectPerfil: '/perfil'
+        });
       }
+
 
       res.redirect('/feed');
     });
@@ -119,7 +128,11 @@ exports.eliminarPublicacion = (req, res) => {
   db.query(sql, [id, req.session.usuario.id], (err) => {
     if (err) {
       console.error('Error al eliminar publicación:', err.message);
-      return res.status(500).send('Error al eliminar publicación');
+      return res.render('error', {
+        error: 'Error al eliminar la publicación. Por favor, inténtalo de nuevo.',
+        redirectFeed: '/feed',
+        redirectPerfil: '/perfil'
+      });
     }
 
     res.redirect('/feed');

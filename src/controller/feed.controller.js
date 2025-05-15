@@ -12,7 +12,11 @@ exports.getFeed = (req, res) => {
   db.query(sqlPublicaciones, (err, publicaciones) => {
     if (err) {
       console.error('Error al obtener publicaciones:', err.message);
-      return res.status(500).send('Error al cargar el feed');
+      return res.render('error', {
+        error: 'Error al cargar el feed. Por favor, inténtalo de nuevo.',
+        redirectFeed: '/',
+        redirectLogin: '/login'
+      });
     }
 
     const ids = publicaciones.map(p => p.id_publicacion);
@@ -28,9 +32,14 @@ exports.getFeed = (req, res) => {
     db.query(sqlComentarios, [ids], (err, comentarios) => {
       if (err) {
         console.error('Error al obtener comentarios:', err.message);
-        return res.status(500).send('Error al cargar comentarios');
+        return res.render('error', {
+          error: 'Error al cargar los comentarios. Por favor, inténtalo de nuevo.',
+          redirectFeed: '/',
+          redirectLogin: '/login'
+        });
       }
 
+// sistema de likes                                                                                      
       const sqlLikes = `
         SELECT id_publicacion, id_usuario FROM Like_Publicacion
         WHERE id_publicacion IN (?)
@@ -39,7 +48,11 @@ exports.getFeed = (req, res) => {
       db.query(sqlLikes, [ids], (err, likes) => {
         if (err) {
           console.error('Error al obtener likes:', err.message);
-          return res.status(500).send('Error al cargar likes');
+          return res.render('error', {
+            error: 'Error al cargar los likes. Por favor, inténtalo de nuevo.',
+            redirectFeed: '/',
+            redirectLogin: '/login'
+          });
         }
 
         const agrupadosComentarios = {};

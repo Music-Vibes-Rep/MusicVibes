@@ -77,45 +77,43 @@ exports.getProfile = (req, res) => {
 
   db.query(sqlUser, [id_usuario], (err, resultUsuario) => {
     if (err || resultUsuario.length === 0) {
-      //console.error('Error al obtener usuario:', err?.message);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Error al obtener usuario",
+      console.error('Error al obtener usuario:', err?.message);
+      return res.render('error', {
+        error: 'Error al obtener usuario. Intenta de nuevo.',
+        redirectFeed: '/',
+        redirectLogin: '/login'
       });
-      return res.status(500).send('Error al obtener usuario');
+
     }
 
     const usuario = resultUsuario[0];
 
     db.query(sqlPub, [id_usuario], (err, publicaciones) => {
       if (err) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Error al obtener publicaciones",
+        return res.render('error', {
+          error: 'Error al obtener publicaciones. Intenta de nuevo.',
+          redirectFeed: '/',
+          redirectPerfil: '/perfil'
         });
-        return res.status(500).send('Error al obtener publicaciones');
       }
+
 
       db.query(sqlInst, (err, instrumentos) => {
         if (err) {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Error al obtener instrumentos",
+          return res.render('error', {
+            error: 'Error al obtener instrumentos. Intenta de nuevo.',
+            redirectFeed: '/',
+            redirectPerfil: '/perfil'
           });
-          return res.status(500).send('Error al obtener instrumentos');
         }
 
         db.query(sqlProv, (err, provincias) => {
           if (err) {
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "Error al obtener provincias",
+            return res.render('error', {
+              error: 'Error al obtener provincias. Intenta de nuevo.',
+              redirectFeed: '/',
+              redirectPerfil: '/perfil'
             });
-            return res.status(500).send('Error al obtener provincias');
           }
 
           res.render('perfil', {
@@ -148,7 +146,14 @@ exports.editarPerfil = (req, res) => {
     id_instrumento || null, id_provincia || null,
     parseInt(es_musico) || 0, id_usuario
   ], (err) => {
-    if (err) return res.status(500).send('Error al actualizar perfil');
+    //if (err) return res.status(500).send('Error al actualizar perfil');
+    if (err) {
+      return res.render('error', {
+        error: 'Error al actualizar el perfil. Por favor, inténtalo de nuevo.',
+        redirectFeed: '/',
+        redirectPerfil: '/perfil'
+      });
+    }
 
     req.session.usuario = {
       ...req.session.usuario,
@@ -180,15 +185,25 @@ exports.registrarUsuario = async (req, res) => {
     usuario.es_musico = es_musico;
 
     UserModel.create(usuario, (err) => {
-      if (err) return res.status(500).send('Error al guardar');
+      //if (err) return res.status(500).send('Error al guardar');
+      if (err) {
+        return res.render('error', {
+          error: 'Error al guardar el usuario. Es posible que el correo ya esté registrado o los datos sean inválidos.',
+          redirectFeed: '/',
+          redirectLogin: '/login',
+          redirectRegistro: '/registro'
+        });
+      }
       res.redirect('/login');
+
     });
   } catch (err) {
     //res.status(500).send('Error interno del servidor');
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Error interno del servidor",
+    res.render('error', {
+      error: 'Error interno del servidor. Intenta más tarde.',
+      redirectFeed: '/',
+      redirectLogin: '/login',
+      redirectRegistro: '/registro'
     });
   }
 };
@@ -201,13 +216,12 @@ exports.eliminarUsuario = (req, res) => {
   const sql = 'DELETE FROM Usuario WHERE id_usuario = ?';
   db.query(sql, [id_usuario], (err) => {
     if (err) {
-      //console.error('Error al eliminar cuenta:', err?.message);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Error al eliminar cuenta",
+      console.error('Error al eliminar cuenta:', err?.message);
+      return res.render('error', {
+        error: 'Error al eliminar tu cuenta. Por favor, intenta de nuevo más tarde.',
+        redirectFeed: '/',
+        redirectLogin: '/login'
       });
-      return res.status(500).send('Error al eliminar cuenta');
     }
     req.session.destroy(() => res.redirect('/'));
   });
@@ -219,11 +233,25 @@ exports.loginUsuario = (req, res) => {
   const sql = 'SELECT * FROM Usuario WHERE email = ? LIMIT 1';
 
   db.query(sql, [email], async (err, results) => {
-    if (err || results.length === 0) return res.status(401).send('Usuario no encontrado');
+    //if (err || results.length === 0) return res.status(401).send('Usuario no encontrado');
+    if (err || results.length === 0) {
+      return res.render('error', {
+        error: 'Usuario no encontrado',
+        redirectFeed: '/',
+        redirectLogin: '/login'
+      });
+    }
 
     const usuario = results[0];
     const match = await bcrypt.compare(password, usuario.password);
-    if (!match) return res.status(401).send('Contraseña incorrecta');
+    //if (!match) return res.status(401).send('Contraseña incorrecta');
+    if (!match) {
+      return res.render('error', {
+        error: 'Contraseña incorrecta',
+        redirectFeed: '/',
+        redirectLogin: '/login'
+      });
+    }
 
     req.session.usuario = {
       id: usuario.id_usuario,
@@ -251,17 +279,45 @@ exports.verPerfilPublico = (req, res) => {
   const id_usuario_visto = parseInt(req.params.id);
   const id_usuario_logueado = req.session.usuario?.id || null;
 
-  if (!id_usuario_visto) return res.status(404).send('Usuario no válido');
+  //if (!id_usuario_visto) return res.status(404).send('Usuario no válido');
+  if (!id_usuario_visto) {
+  return res.render('error', {
+    error: 'Usuario no válido',
+    redirectFeed: '/',
+    redirectLogin: '/login'
+  });
+}
 
   db.query(sqlUsuario, [id_usuario_visto], (err, usuarios) => {
-    if (err || usuarios.length === 0) return res.status(404).send('Usuario no encontrado');
+    //if (err || usuarios.length === 0) return res.status(404).send('Usuario no encontrado');
+    if (err || usuarios.length === 0) {
+    return res.render('error', {
+      error: 'Usuario no encontrado',
+      redirectFeed: '/',
+      redirectLogin: '/login'
+    });
+  }
     const usuarioPerfil = usuarios[0];
 
     db.query(sqlPublicaciones, [id_usuario_visto], (err, publicaciones) => {
-      if (err) return res.status(500).send('Error cargando publicaciones');
+      //if (err) return res.status(500).send('Error cargando publicaciones');
+      if (err || usuarios.length === 0) {
+        return res.render('error', {
+          error: 'Error cargando publicaciones',
+          redirectFeed: '/',
+          redirectLogin: '/login'
+        });
+      }
 
       db.query(sqlContadores, [id_usuario_visto, id_usuario_visto], (err, contadores) => {
-        if (err) return res.status(500).send('Error cargando seguidores');
+        //if (err) return res.status(500).send('Error cargando seguidores');
+        if (contadores.length === 0) {
+          return res.render('error', {
+            error: 'Error cargando seguidores',
+            redirectFeed: '/',
+            redirectLogin: '/login'
+          });
+        }
         const { seguidores, siguiendo } = contadores[0];
 
         if (!id_usuario_logueado || id_usuario_logueado === id_usuario_visto) {
@@ -277,7 +333,14 @@ exports.verPerfilPublico = (req, res) => {
         }
 
         db.query(sqlFollowCheck, [id_usuario_logueado, id_usuario_visto], (err, resultado) => {
-          if (err) return res.status(500).send('Error validando follow');
+          //if (err) return res.status(500).send('Error validando follow');
+          if (err) {
+            return res.render('error', {
+              error: 'Error validando follow',
+              redirectFeed: '/',
+              redirectLogin: '/login'
+            });
+          }
 
           res.render('perfil_publico', {
             usuarioPerfil,
@@ -302,7 +365,14 @@ exports.toggleFollow = (req, res) => {
 
 
   db.query(sqlExiste, [seguidor, seguido], (err, resultado) => {
-    if (err) return res.status(500).send('Error al procesar follow');
+    //if (err) return res.status(500).send('Error al procesar follow');
+    if (err) {
+      return res.render('error', {
+        error: 'Error al procesar follow',
+        redirectFeed: '/',
+        redirectLogin: '/login'
+      });
+    }
 
     if (resultado.length > 0) {
       db.query(sqlDelete, [seguidor, seguido], () => res.redirect(`/usuario/${seguido}`));

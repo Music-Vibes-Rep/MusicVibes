@@ -33,18 +33,45 @@ exports.verPerfilPublico = (req, res) => {
   const id_usuario_visto = parseInt(req.params.id);
   const id_usuario_logueado = req.session.usuario?.id || null;
 
-  if (!id_usuario_visto) return res.status(404).send('Usuario no válido');
+  if (!id_usuario_visto) {
+    return res.render('error', {
+      error: 'Usuario no válido.',
+      redirectFeed: '/',
+      redirectLogin: '/login'
+    });
+  }
+
 
   
   db.query(sqlUsuario, [id_usuario_visto], (err, usuarios) => {
-    if (err || usuarios.length === 0) return res.status(404).send('Usuario no encontrado');
+    if (err || usuarios.length === 0) {
+      return res.render('error', {
+        error: 'Usuario no encontrado.',
+        redirectFeed: '/',
+        redirectLogin: '/login'
+      });
+    }
+
     const usuarioPerfil = usuarios[0];
 
     db.query(sqlPublicaciones, [id_usuario_visto], (err, publicaciones) => {
-      if (err) return res.status(500).send('Error cargando publicaciones');
+      if (err) {
+        return res.render('error', {
+          error: 'Error cargando publicaciones del usuario.',
+          redirectFeed: '/',
+          redirectLogin: '/login'
+        });
+      }
 
       db.query(sqlContadores, [id_usuario_visto, id_usuario_visto], (err, contadores) => {
-        if (err) return res.status(500).send('Error cargando seguidores');
+        if (err) {
+          return res.render('error', {
+            error: 'Error cargando la información de seguidores.',
+            redirectFeed: '/',
+            redirectLogin: '/login'
+          });
+        }
+
         const { seguidores, siguiendo } = contadores[0];
 
         if (!id_usuario_logueado || id_usuario_logueado === id_usuario_visto) {
@@ -60,7 +87,13 @@ exports.verPerfilPublico = (req, res) => {
         }
 
         db.query(sqlFollowCheck, [id_usuario_logueado, id_usuario_visto], (err, resultado) => {
-          if (err) return res.status(500).send('Error validando follow');
+          if (err) {
+            return res.render('error', {
+              error: 'Error al validar la información de seguimiento.',
+              redirectFeed: '/',
+              redirectLogin: '/login'
+            });
+          }
 
           res.render('perfil_publico', {
             usuarioPerfil,
@@ -85,7 +118,15 @@ exports.toggleFollow = (req, res) => {
 
 
   db.query(sqlExiste, [seguidor, seguido], (err, resultado) => {
-    if (err) return res.status(500).send('Error al procesar follow');
+    if (err || results.length === 0) {
+      console.error('Error al buscar publicación para editar:', err?.message);
+      return res.render('error', {
+        error: 'Publicación no encontrada o no tienes permisos para editarla.',
+        redirectFeed: '/feed',
+        redirectPerfil: '/perfil'
+      });
+    }
+
 
     if (resultado.length > 0) {
       db.query(sqlDelete, [seguidor, seguido], () => res.redirect(`/usuario/${seguido}`));
