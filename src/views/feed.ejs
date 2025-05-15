@@ -81,24 +81,25 @@
                 <!-- Interacciones -->
                 <div class="mt-4 bg-gray-100 p-4 rounded-lg shadow-inner space-y-4">
                   <!-- Likes -->
-                  <form action="/like" method="POST" class="flex items-center justify-start gap-2">
-                    <input type="hidden" name="id_publicacion" value="<%= pub.id_publicacion %>">
-                    <button type="<%= usuario ? 'submit' : 'button' %>"
-                      class="flex items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed" <%=usuario
-                      ? '' : 'disabled' %>>
-                      <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-6 h-6 transition duration-200 transform group-hover:scale-110 <%= pub.usuarioDioLike ? 'text-pink-600' : 'text-gray-400' %>"
-                        fill="<%= pub.usuarioDioLike ? 'currentColor' : 'none' %>" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M12 21C12 21 4.5 14.5 4.5 9.5C4.5 6.5 7 4 9.5 4C11 4 12 5 12 5C12 5 13 4 14.5 4C17 4 19.5 6.5 19.5 9.5C19.5 14.5 12 21 12 21Z" />
-                      </svg>
-                      <span class="text-sm font-semibold text-pink-800">Vibras (<%= pub.totalLikes %>)</span>
-                    </button>
-                  </form>
+                  <button type="button" onclick="darLike('<%= pub.id_publicacion %>')"
+                    class="flex items-center gap-2 group"
+                    id="like-btn-<%= pub.id_publicacion %>">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                      class="w-6 h-6 transition duration-200 transform group-hover:scale-110 <%= pub.usuarioDioLike ? 'text-pink-600' : 'text-gray-400' %>"
+                      fill="<%= pub.usuarioDioLike ? 'currentColor' : 'none' %>"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 21C12 21 4.5 14.5 4.5 9.5C4.5 6.5 7 4 9.5 4C11 4 12 5 12 5C12 5 13 4 14.5 4C17 4 19.5 6.5 19.5 9.5C19.5 14.5 12 21 12 21Z" />
+                    </svg>
+                    <span id="like-count-<%= pub.id_publicacion %>">Vibras (<%= pub.totalLikes %>)</span>
+                  </button>
+
+
 
                   <!-- Comentarios -->
-                  <button type="button" onclick="toggleComentarios(<%= pub.id_publicacion %>)"
+                  <button type="button" onclick="toggleComentarios('<%= pub.id_publicacion %>')"
                     class="text-sm text-pink-700 font-semibold hover:underline flex items-center gap-1">
                     Comentarios (<%= pub.comentarios.length %>) <span id="flecha-<%= pub.id_publicacion %>">▼</span>
                   </button>
@@ -172,6 +173,37 @@
           box.style.display = isHidden ? 'block' : 'none';
           arrow.textContent = isHidden ? '▲' : '▼';
         }
+
+        async function darLike(idPublicacion) {
+          try {
+            const res = await fetch('/like', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_publicacion: idPublicacion })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+              const btn = document.getElementById(`like-btn-${idPublicacion}`);
+              const countEl = document.getElementById(`like-count-${idPublicacion}`);
+              const svg = btn.querySelector('svg');
+              const count = parseInt(countEl.textContent.match(/\d+/)[0]);
+
+              if (data.liked) {
+                svg.classList.remove('text-gray-400');
+                svg.classList.add('text-pink-600');
+                countEl.textContent = `Vibras (${count + 1})`;
+              } else {
+                svg.classList.remove('text-pink-600');
+                svg.classList.add('text-gray-400');
+                countEl.textContent = `Vibras (${count - 1})`;
+              }
+            }
+          } catch (err) {
+            console.error('Error al procesar el like:', err);
+          }
+        }
+
       </script>
 </body>
 
