@@ -194,7 +194,7 @@ exports.registrarUsuario = async (req, res) => {
           redirectRegistro: '/registro'
         });
       }
-      res.redirect('/login');
+      res.render('registroExitoso', { nombre, email });
 
     });
   } catch (err) {
