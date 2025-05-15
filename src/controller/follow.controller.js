@@ -117,21 +117,41 @@ exports.toggleFollow = (req, res) => {
 
 
 
-  db.query(sqlExiste, [seguidor, seguido], (err, resultado) => {
-    if (err || results.length === 0) {
-      console.error('Error al buscar publicación para editar:', err?.message);
+  db.query(sqlExiste, [seguidor, seguido], (err, result) => {
+    if (err) {
       return res.render('error', {
-        error: 'Publicación no encontrada o no tienes permisos para editarla.',
+        error: 'Error al procesar la acción de seguir/dejar de seguir.',
         redirectFeed: '/feed',
-        redirectPerfil: '/perfil'
+        redirectPerfil: `/usuario/${seguido}`,
+        redirectLogin: '/login'
       });
     }
 
 
-    if (resultado.length > 0) {
-      db.query(sqlDelete, [seguidor, seguido], () => res.redirect(`/usuario/${seguido}`));
+    if (result.length > 0) {
+      db.query(sqlDelete, [seguidor, seguido], (err2) => {
+        if (err2) {
+          return res.render('error', {
+            error: 'Error al dejar de seguir al usuario.',
+            redirectFeed: '/feed',
+            redirectPerfil: `/usuario/${seguido}`,
+            redirectLogin: '/login'
+          });
+        }
+        return res.redirect(`/usuario/${seguido}`);
+      });
     } else {
-      db.query(sqlInsert, [seguidor, seguido], () => res.redirect(`/usuario/${seguido}`));
+      db.query(sqlInsert, [seguidor, seguido], (err2) => {
+        if (err2) {
+          return res.render('error', {
+            error: 'Error al seguir al usuario.',
+            redirectFeed: '/feed',
+            redirectPerfil: `/usuario/${seguido}`,
+            redirectLogin: '/login'
+          });
+        }
+        return res.redirect(`/usuario/${seguido}`);
+      });
     }
   });
 };
