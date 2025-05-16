@@ -20,233 +20,256 @@
 <body class="text-white bg-gradient-to-r from-red-600 to-pink-700 min-h-screen">
   <%- include('partials/_navbar') %>
 
-    <main class="main-wrapper container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Centro -->
-      <section class="md:col-span-2 space-y-6">
-        <!-- Barra de búsqueda -->
-        <div
-          class="bg-white text-gray-800 rounded-xl shadow px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div class="flex-1">
-            <input type="search" placeholder="Busca..."
-              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
-          </div>
-          <div class="flex-shrink-0">
-            <a href="/publicacion"
-              class="inline-block mt-2 sm:mt-0 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold px-4 py-2 rounded-md shadow">
-              Expresa tu vibra
-            </a>
-          </div>
+  <main class="main-wrapper container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <section class="md:col-span-2 space-y-6">
+      <div class="bg-white text-gray-800 rounded-xl shadow px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex-1">
+          <input type="search" placeholder="Busca..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500" />
         </div>
+        <div class="flex-shrink-0">
+          <a href="/publicacion" class="inline-block mt-2 sm:mt-0 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold px-4 py-2 rounded-md shadow">
+            Expresa tu vibra
+          </a>
+        </div>
+      </div>
 
-        <% publicaciones.forEach(pub=> { %>
-          <article class="relative bg-white text-gray-900 rounded-xl shadow-md p-4 border-l-4 border-pink-400">
-            <div class="absolute top-3 right-4 flex space-x-2 z-10">
-              <% if (usuario && parseInt(usuario.id)===parseInt(pub.id_usuario)) { %>
-                <a href="/publicaciones/<%= pub.id_publicacion %>/editar"
-                  class="flex items-center gap-1 text-xs font-medium bg-blue-100 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-200 transition">
-                  ✏️ Editar
-                </a>
-                <form action="/publicaciones/<%= pub.id_publicacion %>/eliminar" method="POST"
-                  onsubmit="return confirm('¿Seguro que deseas eliminar esta publicación?');">
-                  <button type="submit"
-                    class="flex items-center gap-1 text-xs font-medium bg-red-100 text-red-700 px-3 py-1 rounded-full hover:bg-red-200 transition">
-                    🗑️ Eliminar
-                  </button>
-                </form>
-                <% } %>
+      <% publicaciones.forEach(pub=> { %>
+        <article class="relative bg-white text-gray-900 rounded-xl shadow-md p-4 border-l-4 border-pink-400">
+          <div class="absolute top-3 right-4 flex space-x-2 z-10">
+            <% if (usuario && parseInt(usuario.id) === parseInt(pub.id_usuario)) { %>
+              <a href="/publicaciones/<%= pub.id_publicacion %>/editar"
+                class="flex items-center gap-1 text-xs font-medium bg-blue-100 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-200 transition">
+                ✏️ Editar
+              </a>
+              <form action="/publicaciones/<%= pub.id_publicacion %>/eliminar" method="POST"
+                onsubmit="return confirm('¿Seguro que deseas eliminar esta publicación?');">
+                <button type="submit"
+                  class="flex items-center gap-1 text-xs font-medium bg-red-100 text-red-700 px-3 py-1 rounded-full hover:bg-red-200 transition">
+                  🗑️ Eliminar
+                </button>
+              </form>
+            <% } %>
+          </div>
+
+          <div class="flex items-center space-x-3 mb-3">
+            <img src="<%= pub.foto_perfil || 'assets/img/default-profile.png' %>" alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-pink-300">
+            <div>
+              <a href="/usuario/<%= pub.id_usuario %>" class="text-red-700 hover:underline font-semibold text-sm">
+                <%= pub.nombre_usuario %>
+              </a>
+              <p class="text-xs text-gray-500">
+                <%= new Date(pub.fecha_publicacion).toLocaleDateString() %>
+              </p>
             </div>
+          </div>
 
-            <div class="flex items-center space-x-3 mb-3">
-              <img src="<%= pub.foto_perfil || 'assets/img/default-profile.png' %>" alt="Avatar"
-                class="w-12 h-12 rounded-full object-cover border border-pink-300">
-              <div>
-                <a href="/usuario/<%= pub.id_usuario %>" class="text-red-700 hover:underline font-semibold text-sm">
-                  <%= pub.nombre_usuario %>
-                </a>
-                <p class="text-xs text-gray-500">
-                  <%= new Date(pub.fecha_publicacion).toLocaleDateString() %>
-                </p>
-              </div>
-            </div>
+          <% if (pub.foto) { %>
+            <img src="<%= pub.foto %>" alt="Imagen de publicación"
+              class="w-full rounded-md mb-3 object-contain max-h-[600px] border border-gray-200" />
+          <% } %>
 
-            <% if (pub.foto) { %>
-              <img src="<%= pub.foto %>" alt="Imagen de publicación"
-                class="w-full rounded-md mb-3 object-contain max-h-[600px] border border-gray-200" />
-              <% } %>
+          <div class="text-gray-800 text-sm whitespace-pre-line">
+            <%- pub.contenido %>
+          </div>
 
-                <div class="text-gray-800 text-sm whitespace-pre-line">
-                  <%- pub.contenido %>
-                </div>
+          <div class="mt-4 bg-gray-100 p-4 rounded-lg shadow-inner space-y-4">
+            <button type="button" onclick="darLike('<%= pub.id_publicacion %>')" class="group flex items-center gap-1" id="like-btn-<%= pub.id_publicacion %>">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6 transition-transform duration-200 group-hover:scale-110 <%= pub.usuarioDioLike ? 'text-pink-600' : 'text-gray-400' %>"
+                fill="<%= pub.usuarioDioLike ? 'currentColor' : 'none' %>" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 21C12 21 4.5 14.5 4.5 9.5C4.5 6.5 7 4 9.5 4C11 4 12 5 12 5C12 5 13 4 14.5 4C17 4 19.5 6.5 19.5 9.5C19.5 14.5 12 21 12 21Z" />
+              </svg>
+              <span id="like-count-<%= pub.id_publicacion %>" class="text-sm font-semibold text-pink-800">
+                <%= pub.totalLikes %> <span class="hidden sm:inline">Vibras</span>
+              </span>
+            </button>
 
-                <!-- Interacciones -->
-                <div class="mt-4 bg-gray-100 p-4 rounded-lg shadow-inner space-y-4">
-                  <!-- Likes -->
-                  <button type="button" onclick="darLike('<%= pub.id_publicacion %>')" class="group flex items-center gap-1" id="like-btn-<%= pub.id_publicacion %>">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                      class="w-6 h-6 transition-transform duration-200 group-hover:scale-110 <%= pub.usuarioDioLike ? 'text-pink-600' : 'text-gray-400' %>"
-                      fill="<%= pub.usuarioDioLike ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 21C12 21 4.5 14.5 4.5 9.5C4.5 6.5 7 4 9.5 4C11 4 12 5 12 5C12 5 13 4 14.5 4C17 4 19.5 6.5 19.5 9.5C19.5 14.5 12 21 12 21Z" />
-                    </svg>
-                    <span id="like-count-<%= pub.id_publicacion %>" class="text-sm font-semibold text-pink-800">
-                      <%= pub.totalLikes %> <span class="hidden sm:inline">Vibras</span>
-                    </span>
-                  </button>
+            <button type="button" id="comentario-boton-<%= pub.id_publicacion %>"
+              onclick="toggleComentarios('<%= pub.id_publicacion %>')" class="text-sm text-pink-700 font-semibold hover:underline flex items-center gap-1">
+              Comentarios (<span id="comentario-contador-<%= pub.id_publicacion %>"><%= pub.comentarios.length %></span>) 
+              <span id="flecha-<%= pub.id_publicacion %>">▼</span>
+            </button>
 
-                  <!-- Comentarios -->
-                  <button type="button" id="comentario-boton-<%= pub.id_publicacion %>" onclick="toggleComentarios('<%= pub.id_publicacion %>')"
-                    class="text-sm text-pink-700 font-semibold hover:underline flex items-center gap-1">
-                    Comentarios (<span id="comentario-contador-<%= pub.id_publicacion %>"><%= pub.comentarios.length %></span>) 
-                    <span id="flecha-<%= pub.id_publicacion %>">▼</span>
-                  </button>
-
-
-                  <div id="comentarios-<%= pub.id_publicacion %>" class="space-y-3" style="display: none;">
-                    <% pub.comentarios.forEach(com=> { %>
-                      <div
-                        class="bg-white p-3 rounded-md shadow flex justify-between items-start border border-gray-200">
-                        <div>
-                          <strong class="text-red-600">
-                            <a href="/usuario/<%= com.id_usuario %>" class="hover:underline">
-                              <%= com.nombre_usuario %>
-                            </a>
-                          </strong>
-                          <p class="text-sm text-gray-800 mt-1">
-                            <%= com.Comentario %>
-                          </p>
-                        </div>
-                        <div class="text-right">
-                          <span class="text-xs text-gray-500 block">
-                            <%= new Date(com.fecha_comentario).toLocaleDateString('es-ES') %>
-                          </span>
-                          <% if (usuario && usuario.id===com.id_usuario) { %>
-                            <form action="/comentario/eliminar" method="POST"
-                              onsubmit="return confirm('¿Eliminar este comentario?')">
-                              <input type="hidden" name="id_comentario" value="<%= com.id_comentario %>">
-                              <button class="text-xs text-red-500 hover:underline mt-1">Eliminar</button>
-                            </form>
-                            <% } %>
-                        </div>
-                      </div>
-                      <% }) %>
+            <div id="comentarios-<%= pub.id_publicacion %>" class="space-y-3" style="display: none;">
+              <% pub.comentarios.forEach(com => { %>
+                <div class="bg-white p-3 rounded-md shadow flex justify-between items-start border border-gray-200">
+                  <div>
+                    <strong class="text-red-600">
+                      <a href="/usuario/<%= com.id_usuario %>" class="hover:underline"><%= com.nombre_usuario %></a>
+                    </strong>
+                    <p class="text-sm text-gray-800 mt-1"><%= com.Comentario %></p>
                   </div>
-
-                  <!-- Comentar -->
-                  <form onsubmit="enviarComentario(event, '<%= pub.id_publicacion %>')" class="space-y-2">
-                    <input type="hidden" name="id_publicacion" value="<%= pub.id_publicacion %>">
-                    <textarea id="comentario-<%= pub.id_publicacion %>" rows="2" required
-                      class="w-full p-2 border rounded-md resize-none text-sm text-gray-900"
-                      placeholder="Escribe un comentario..."></textarea>
-                    <button type="submit"
-                      class="bg-red-600 hover:bg-red-500 text-white px-4 py-1 rounded text-sm shadow">
-                      Comentar
-                    </button>
-                  </form>
-
+                  <div class="text-right">
+                    <span class="text-xs text-gray-500 block">
+                      <%= new Date(com.fecha_comentario).toLocaleDateString('es-ES') %>
+                    </span>
+                    <% if (usuario && usuario.id === com.id_usuario) { %>
+                      <form action="/comentario/eliminar" method="POST" onsubmit="return confirm('¿Eliminar este comentario?')">
+                        <input type="hidden" name="id_comentario" value="<%= com.id_comentario %>">
+                        <button class="text-xs text-red-500 hover:underline mt-1">Eliminar</button>
+                      </form>
+                    <% } %>
+                  </div>
                 </div>
-          </article>
-          <% }) %>
-      </section>
+              <% }) %>
+            </div>
 
-      <!-- Sidebar -->
-      <aside class="hidden md:flex flex-col space-y-4">
-        <div class="bg-white text-gray-900 p-4 rounded-xl shadow border border-pink-200">
-          <h4 class="text-sm font-semibold mb-2 text-red-600">Gente para chatear</h4>
-          <p class="text-sm text-gray-600 italic">Todavía no tienes amigos</p>
-        </div>
-        <div class="bg-white text-gray-900 p-4 rounded-xl shadow border border-pink-200">
-          <h4 class="text-sm font-semibold mb-2 text-red-600">Calendario de eventos</h4>
-          <p class="text-sm text-gray-600 italic">Próximamente...</p>
-        </div>
-      </aside>
-    </main>
+            <form onsubmit="enviarComentario(event, '<%= pub.id_publicacion %>')" class="space-y-2">
+              <input type="hidden" name="id_publicacion" value="<%= pub.id_publicacion %>">
+              <textarea id="comentario-<%= pub.id_publicacion %>" rows="2" required class="w-full p-2 border rounded-md resize-none text-sm text-gray-900" placeholder="Escribe un comentario..."></textarea>
+              <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-4 py-1 rounded text-sm shadow">Comentar</button>
+            </form>
+          </div>
+        </article>
+      <% }) %>
+    </section>
 
-    <%- include('partials/_footer') %>
+    <aside class="hidden md:flex flex-col space-y-4">
+      <div class="bg-white text-gray-900 p-4 rounded-xl shadow border border-pink-200">
+        <h4 class="text-sm font-semibold mb-2 text-red-600">Gente para chatear</h4>
+        <p class="text-sm text-gray-600 italic">Todavía no tienes amigos</p>
+      </div>
+      <div class="bg-white text-gray-900 p-4 rounded-xl shadow border border-pink-200">
+        <h4 class="text-sm font-semibold mb-2 text-red-600">Calendario de eventos</h4>
+        <p class="text-sm text-gray-600 italic">Próximamente...</p>
+      </div>
+    </aside>
+  </main>
 
-      <script>
-        function toggleComentarios(id) {
-          const box = document.getElementById(`comentarios-${id}`);
-          const arrow = document.getElementById(`flecha-${id}`);
-          const isHidden = box.style.display === 'none' || !box.style.display;
-          box.style.display = isHidden ? 'block' : 'none';
-          arrow.textContent = isHidden ? '▲' : '▼';
+  <%- include('partials/_footer') %>
+
+  <script>
+  const usuarioActualId = <%= usuario?.id || 'null' %>;
+</script>
+
+<script>
+  const usuarioActualId = <%= usuario?.id || 'null' %>;
+</script>
+
+<script>
+  async function enviarComentario(e, idPublicacion) {
+    e.preventDefault();
+
+    const textarea = document.getElementById(`comentario-${idPublicacion}`);
+    const contenido = textarea.value.trim();
+    if (!contenido) return;
+
+    try {
+      const res = await fetch('/comentar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_publicacion: idPublicacion, contenido })
+      });
+
+      const data = await res.json();
+      if (res.ok && data?.nombre_usuario) {
+        const nuevoComentario = document.createElement('div');
+        nuevoComentario.className = "bg-white p-3 rounded-md shadow flex justify-between items-start border border-gray-200";
+
+        let eliminarHtml = '';
+        if (usuarioActualId === data.id_usuario) {
+          eliminarHtml = `
+            <button onclick="eliminarComentario(${data.id_comentario}, ${idPublicacion}, this)" class="text-xs text-red-500 hover:underline mt-1">
+              Eliminar
+            </button>
+          `;
         }
 
-        async function darLike(idPublicacion) {
-          try {
-            const res = await fetch('/like', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id_publicacion: idPublicacion })
-            });
+        nuevoComentario.innerHTML = `
+          <div>
+            <strong class="text-red-600">
+              <a href="/usuario/${data.id_usuario}" class="hover:underline">${data.nombre_usuario}</a>
+            </strong>
+            <p class="text-sm text-gray-800 mt-1">${data.Comentario}</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-gray-500 block">${new Date(data.fecha_comentario).toLocaleDateString('es-ES')}</span>
+            ${eliminarHtml}
+          </div>
+        `;
 
-            const data = await res.json();
-            if (res.ok) {
-              const btn = document.getElementById(`like-btn-${idPublicacion}`);
-              const countEl = document.getElementById(`like-count-${idPublicacion}`);
-              const svg = btn.querySelector('svg');
-              const count = parseInt(countEl.textContent.match(/\d+/)[0]);
+        const lista = document.getElementById(`comentarios-${idPublicacion}`);
+        lista.appendChild(nuevoComentario);
+        lista.style.display = 'block';
 
-              if (data.liked) {
-                svg.classList.remove('text-gray-400');
-                svg.classList.add('text-pink-600');
-                countEl.textContent = `Vibras (${count + 1})`;
-              } else {
-                svg.classList.remove('text-pink-600');
-                svg.classList.add('text-gray-400');
-                countEl.textContent = `Vibras (${count - 1})`;
-              }
-            }
-          } catch (err) {
-            console.error('Error al procesar el like:', err);
-          }
+        const contador = document.getElementById(`comentario-contador-${idPublicacion}`);
+        const actual = parseInt(contador.textContent);
+        contador.textContent = actual + 1;
+
+        textarea.value = '';
+      }
+    } catch (err) {
+      alert('Error al comentar');
+    }
+  }
+
+  async function eliminarComentario(idComentario, idPublicacion, boton) {
+    if (!confirm('¿Eliminar este comentario?')) return;
+
+    try {
+      const res = await fetch('/comentario/eliminar', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_comentario: idComentario })
+      });
+
+      if (res.ok) {
+        const comentarioDiv = boton.closest('div.bg-white');
+        comentarioDiv.remove();
+
+        const contador = document.getElementById(`comentario-contador-${idPublicacion}`);
+        const actual = parseInt(contador.textContent);
+        contador.textContent = Math.max(0, actual - 1);
+      } else {
+        alert('No se pudo eliminar el comentario.');
+      }
+    } catch (err) {
+      alert('Error al eliminar el comentario.');
+    }
+  }
+</script>
+
+<script>
+  async function darLike(idPublicacion) {
+    try {
+      const res = await fetch('/like', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id_publicacion: idPublicacion })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        const btn = document.getElementById(`like-btn-${idPublicacion}`);
+        const svg = btn.querySelector('svg');
+        const countSpan = document.getElementById(`like-count-${idPublicacion}`);
+        const currentText = countSpan.textContent;
+        const match = currentText.match(/\d+/);
+        let count = match ? parseInt(match[0]) : 0;
+
+        if (data.liked) {
+          svg.classList.remove('text-gray-400');
+          svg.classList.add('text-pink-600');
+          countSpan.innerHTML = `${count + 1} <span class="hidden sm:inline">Vibras</span>`;
+        } else {
+          svg.classList.remove('text-pink-600');
+          svg.classList.add('text-gray-400');
+          countSpan.innerHTML = `${count - 1} <span class="hidden sm:inline">Vibras</span>`;
         }
+      } else {
+        console.error('Error al hacer like:', data?.error || 'Desconocido');
+      }
+    } catch (err) {
+      console.error('Error en la solicitud de like:', err);
+    }
+  }
+</script>
 
-        async function enviarComentario(e, idPublicacion) {
-          e.preventDefault();
 
-          const textarea = document.getElementById(`comentario-${idPublicacion}`);
-          const contenido = textarea.value.trim();
 
-          if (!contenido) return;
-
-          const res = await fetch('/comentar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id_publicacion: idPublicacion, contenido })
-          });
-
-          const data = await res.json();
-          if (res.ok && data && data.nombre_usuario) {
-            const nuevoComentario = document.createElement('div');
-            nuevoComentario.className = "bg-white p-3 rounded-md shadow flex justify-between items-start border border-gray-200";
-            nuevoComentario.innerHTML = `
-              <div>
-                <strong class="text-red-600">
-                  <a href="/usuario/${data.id_usuario}" class="hover:underline">${data.nombre_usuario}</a>
-                </strong>
-                <p class="text-sm text-gray-800 mt-1">${data.Comentario}</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-gray-500 block">${new Date(data.fecha_comentario).toLocaleDateString('es-ES')}</span>
-              </div>
-            `;
-
-            const lista = document.getElementById(`comentarios-${idPublicacion}`);
-            lista.appendChild(nuevoComentario);
-            lista.style.display = 'block';
-
-            const contador = document.getElementById(`comentario-contador-${idPublicacion}`);
-            const actual = parseInt(contador.textContent);
-            contador.textContent = actual + 1;
-
-            textarea.value = '';
-          } else {
-            alert('Error al comentar.');
-          }
-        }
-
-      </script>
 </body>
-
 </html>
