@@ -104,7 +104,7 @@ exports.getProfile = (req, res) => {
     db.query(sqlPub, [id_usuario], (err, publicaciones) => {
       if (err) {
         return res.render('error', {
-          error: 'Error al obtener publicaciones. Intenta de nuevo.',
+          error: 'Error al obtener publicaciones.',
           redirectFeed: '/',
           redirectPerfil: '/perfil'
         });
@@ -155,15 +155,27 @@ exports.getProfile = (req, res) => {
                   });
                 }
 
-                usuario.generos = generosUsuario;
-                usuario.instrumentos = instrumentosUsuario;
+                db.query(sqlContadores, [id_usuario, id_usuario], (err, contadores) => {
+                  if (err || contadores.length === 0) {
+                    return res.render('error', {
+                      error: 'Error al obtener seguidores.',
+                      redirectFeed: '/',
+                      redirectPerfil: '/perfil'
+                    });
+                  }
 
-                res.render('perfil', {
-                  usuario,
-                  publicacion: publicaciones,
-                  instrumentos,
-                  provincias,
-                  generos
+                  const { seguidores, siguiendo } = contadores[0];
+
+                  usuario.generos = generosUsuario;
+                  usuario.instrumentos = instrumentosUsuario;
+
+                  res.render('perfil', {
+                    usuario: { ...usuario, seguidores, siguiendo },
+                    publicacion: publicaciones,
+                    instrumentos,
+                    provincias,
+                    generos
+                  });
                 });
               });
             });
@@ -173,6 +185,7 @@ exports.getProfile = (req, res) => {
     });
   });
 };
+
 
 
 // Editar perfil
