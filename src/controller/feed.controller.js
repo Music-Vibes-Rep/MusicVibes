@@ -23,7 +23,8 @@ exports.getFeed = (req, res) => {
     if (ids.length === 0) return res.render('feed', { publicaciones: [], usuario: req.session.usuario });
 
     const sqlComentarios = `
-      SELECT c.id_comentario, c.id_publicacion, c.Comentario, c.fecha_comentario, c.id_usuario, u.Nombre AS nombre_usuario
+      SELECT c.id_comentario, c.id_publicacion, c.Comentario, c.fecha_comentario, 
+            c.id_usuario, u.Nombre AS nombre_usuario, u.foto_perfil
       FROM Comentario c
       JOIN Usuario u ON c.id_usuario = u.id_usuario
       WHERE c.id_publicacion IN (?)
