@@ -43,6 +43,22 @@ const sqlContadores = `
       (SELECT COUNT(*) FROM Follow WHERE seguido = ?) AS seguidores,
       (SELECT COUNT(*) FROM Follow WHERE seguidor = ?) AS siguiendo
   `;
+
+const sqlUserGeneros = `
+  SELECT g.id_genero, g.Nombre
+  FROM Genero_Musical g
+  JOIN Usuario_Genero ug ON g.id_genero = ug.id_genero
+  WHERE ug.id_usuario = ?
+`;
+const sqlUserInstrumentos = `
+  SELECT i.id_instrumento, i.Nombre
+  FROM Instrumento i
+  JOIN Usuario_Instrumento ui ON i.id_instrumento = ui.id_instrumento
+  WHERE ui.id_usuario = ?
+`;
+
+const sqlGeneros = 'SELECT * FROM Genero_Musical';
+
 const sqlExiste = 'SELECT * FROM Follow WHERE seguidor = ? AND seguido = ?';
 const sqlInsert = 'INSERT INTO Follow (seguidor, seguido) VALUES (?, ?)';
 const sqlDelete = 'DELETE FROM Follow WHERE seguidor = ? AND seguido = ?';
@@ -73,8 +89,6 @@ exports.getProfile = (req, res) => {
 
   const id_usuario = req.session.usuario.id;
 
- 
-
   db.query(sqlUser, [id_usuario], (err, resultUsuario) => {
     if (err || resultUsuario.length === 0) {
       console.error('Error al obtener usuario:', err?.message);
@@ -83,7 +97,6 @@ exports.getProfile = (req, res) => {
         redirectFeed: '/',
         redirectLogin: '/login'
       });
-
     }
 
     const usuario = resultUsuario[0];
@@ -97,11 +110,10 @@ exports.getProfile = (req, res) => {
         });
       }
 
-
       db.query(sqlInst, (err, instrumentos) => {
         if (err) {
           return res.render('error', {
-            error: 'Error al obtener instrumentos. Intenta de nuevo.',
+            error: 'Error al obtener instrumentos.',
             redirectFeed: '/',
             redirectPerfil: '/perfil'
           });
@@ -110,17 +122,51 @@ exports.getProfile = (req, res) => {
         db.query(sqlProv, (err, provincias) => {
           if (err) {
             return res.render('error', {
-              error: 'Error al obtener provincias. Intenta de nuevo.',
+              error: 'Error al obtener provincias.',
               redirectFeed: '/',
               redirectPerfil: '/perfil'
             });
           }
 
-          res.render('perfil', {
-            usuario,
-            publicacion: publicaciones,
-            instrumentos,
-            provincias
+          db.query(sqlGeneros, (err, generos) => {
+            if (err) {
+              return res.render('error', {
+                error: 'Error al obtener géneros.',
+                redirectFeed: '/',
+                redirectPerfil: '/perfil'
+              });
+            }
+
+            db.query(sqlUserGeneros, [id_usuario], (err, generosUsuario) => {
+              if (err) {
+                return res.render('error', {
+                  error: 'Error al obtener géneros del usuario.',
+                  redirectFeed: '/',
+                  redirectPerfil: '/perfil'
+                });
+              }
+
+              db.query(sqlUserInstrumentos, [id_usuario], (err, instrumentosUsuario) => {
+                if (err) {
+                  return res.render('error', {
+                    error: 'Error al obtener instrumentos del usuario.',
+                    redirectFeed: '/',
+                    redirectPerfil: '/perfil'
+                  });
+                }
+
+                usuario.generos = generosUsuario;
+                usuario.instrumentos = instrumentosUsuario;
+
+                res.render('perfil', {
+                  usuario,
+                  publicacion: publicaciones,
+                  instrumentos,
+                  provincias,
+                  generos
+                });
+              });
+            });
           });
         });
       });
@@ -128,38 +174,63 @@ exports.getProfile = (req, res) => {
   });
 };
 
+
 // Editar perfil
-exports.editarPerfil = (req, res) => {
+exports.editarPerfil = async (req, res) => {
   if (!req.session.usuario) return res.redirect('/login');
 
   const id_usuario = req.session.usuario.id;
-  const { nombre, apellido, descripcion, id_instrumento, id_provincia, es_musico } = req.body;
+  const { nombre, apellido, descripcion, id_provincia, es_musico } = req.body;
+
+  const instrumentosSeleccionados = Array.isArray(req.body.instrumentos) ? req.body.instrumentos : [req.body.instrumentos].filter(Boolean);
+  const generosSeleccionados = Array.isArray(req.body.generos) ? req.body.generos : [req.body.generos].filter(Boolean);
   const nuevaFoto = req.file ? '/assets/perfil/' + req.file.filename : req.session.usuario.foto_perfil;
 
-  const sql = `
+  const sqlUpdateUsuario = `
     UPDATE Usuario SET Nombre = ?, Apellido = ?, descripcion = ?, foto_perfil = ?,
-    id_instrumento = ?, id_provincia = ?, es_musico = ? WHERE id_usuario = ?
+    id_provincia = ?, es_musico = ? WHERE id_usuario = ?
   `;
 
-  db.query(sql, [
-    nombre, apellido, descripcion, nuevaFoto,
-    id_instrumento || null, id_provincia || null,
-    parseInt(es_musico) || 0, id_usuario
-  ], (err) => {
-    //if (err) return res.status(500).send('Error al actualizar perfil');
+  db.query(sqlUpdateUsuario, [
+    nombre,
+    apellido,
+    descripcion,
+    nuevaFoto,
+    id_provincia || null,
+    parseInt(es_musico) || 0,
+    id_usuario
+  ], async (err) => {
     if (err) {
+      console.error('Error al actualizar perfil base:', err.message);
       return res.render('error', {
-        error: 'Error al actualizar el perfil. Por favor, inténtalo de nuevo.',
+        error: 'Error al actualizar el perfil.',
         redirectFeed: '/',
         redirectPerfil: '/perfil'
       });
     }
 
+    await db.promise().query('DELETE FROM Usuario_Instrumento WHERE id_usuario = ?', [id_usuario]);
+    await db.promise().query('DELETE FROM Usuario_Genero WHERE id_usuario = ?', [id_usuario]);
+
+    for (const inst of instrumentosSeleccionados) {
+      if (inst) {
+        await db.promise().query('INSERT INTO Usuario_Instrumento (id_usuario, id_instrumento) VALUES (?, ?)', [id_usuario, inst]);
+      }
+    }
+
+    for (const gen of generosSeleccionados) {
+      if (gen) {
+        await db.promise().query('INSERT INTO Usuario_Genero (id_usuario, id_genero) VALUES (?, ?)', [id_usuario, gen]);
+      }
+    }
+
     req.session.usuario = {
       ...req.session.usuario,
-      nombre, apellido, descripcion,
+      nombre,
+      apellido,
+      descripcion,
       foto_perfil: nuevaFoto,
-      id_instrumento, id_provincia,
+      id_provincia,
       es_musico: parseInt(es_musico)
     };
 

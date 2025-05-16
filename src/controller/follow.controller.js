@@ -29,6 +29,18 @@ const sqlContadores = `
       (SELECT COUNT(*) FROM Follow WHERE seguidor = ?) AS siguiendo
   `;
 
+const sqlUserGeneros = `
+  SELECT g.Nombre FROM Genero_Musical g
+  JOIN Usuario_Genero ug ON g.id_genero = ug.id_genero
+  WHERE ug.id_usuario = ?
+`;
+
+const sqlUserInstrumentos = `
+  SELECT i.Nombre FROM Instrumento i
+  JOIN Usuario_Instrumento ui ON i.id_instrumento = ui.id_instrumento
+  WHERE ui.id_usuario = ?
+`;
+
 exports.verPerfilPublico = (req, res) => {
   const id_usuario_visto = parseInt(req.params.id);
   const id_usuario_logueado = req.session.usuario?.id || null;
@@ -41,8 +53,6 @@ exports.verPerfilPublico = (req, res) => {
     });
   }
 
-
-  
   db.query(sqlUsuario, [id_usuario_visto], (err, usuarios) => {
     if (err || usuarios.length === 0) {
       return res.render('error', {
@@ -54,55 +64,78 @@ exports.verPerfilPublico = (req, res) => {
 
     const usuarioPerfil = usuarios[0];
 
-    db.query(sqlPublicaciones, [id_usuario_visto], (err, publicaciones) => {
+    db.query(sqlUserGeneros, [id_usuario_visto], (err, generos) => {
       if (err) {
         return res.render('error', {
-          error: 'Error cargando publicaciones del usuario.',
+          error: 'Error obteniendo géneros.',
           redirectFeed: '/',
           redirectLogin: '/login'
         });
       }
 
-      db.query(sqlContadores, [id_usuario_visto, id_usuario_visto], (err, contadores) => {
+      db.query(sqlUserInstrumentos, [id_usuario_visto], (err, instrumentos) => {
         if (err) {
           return res.render('error', {
-            error: 'Error cargando la información de seguidores.',
+            error: 'Error obteniendo instrumentos.',
             redirectFeed: '/',
             redirectLogin: '/login'
           });
         }
 
-        const { seguidores, siguiendo } = contadores[0];
+        usuarioPerfil.generos = generos.map(g => g.Nombre);
+        usuarioPerfil.instrumentos = instrumentos.map(i => i.Nombre);
 
-        if (!id_usuario_logueado || id_usuario_logueado === id_usuario_visto) {
-          return res.render('perfil_publico', {
-            usuarioPerfil,
-            publicaciones,
-            siguiendoYa: false,
-            mostrarFollow: false,
-            seguidores,
-            siguiendo,
-            usuario: req.session.usuario
-          });
-        }
-
-        db.query(sqlFollowCheck, [id_usuario_logueado, id_usuario_visto], (err, resultado) => {
+        db.query(sqlPublicaciones, [id_usuario_visto], (err, publicaciones) => {
           if (err) {
             return res.render('error', {
-              error: 'Error al validar la información de seguimiento.',
+              error: 'Error cargando publicaciones del usuario.',
               redirectFeed: '/',
               redirectLogin: '/login'
             });
           }
 
-          res.render('perfil_publico', {
-            usuarioPerfil,
-            publicaciones,
-            siguiendoYa: resultado.length > 0,
-            mostrarFollow: true,
-            seguidores,
-            siguiendo,
-            usuario: req.session.usuario
+          db.query(sqlContadores, [id_usuario_visto, id_usuario_visto], (err, contadores) => {
+            if (err) {
+              return res.render('error', {
+                error: 'Error cargando la información de seguidores.',
+                redirectFeed: '/',
+                redirectLogin: '/login'
+              });
+            }
+
+            const { seguidores, siguiendo } = contadores[0];
+
+            if (!id_usuario_logueado || id_usuario_logueado === id_usuario_visto) {
+              return res.render('perfil_publico', {
+                usuarioPerfil,
+                publicaciones,
+                siguiendoYa: false,
+                mostrarFollow: false,
+                seguidores,
+                siguiendo,
+                usuario: req.session.usuario
+              });
+            }
+
+            db.query(sqlFollowCheck, [id_usuario_logueado, id_usuario_visto], (err, resultado) => {
+              if (err) {
+                return res.render('error', {
+                  error: 'Error al validar la información de seguimiento.',
+                  redirectFeed: '/',
+                  redirectLogin: '/login'
+                });
+              }
+
+              res.render('perfil_publico', {
+                usuarioPerfil,
+                publicaciones,
+                siguiendoYa: resultado.length > 0,
+                mostrarFollow: true,
+                seguidores,
+                siguiendo,
+                usuario: req.session.usuario
+              });
+            });
           });
         });
       });

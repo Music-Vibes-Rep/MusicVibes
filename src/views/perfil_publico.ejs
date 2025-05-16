@@ -36,7 +36,21 @@
             <% } %>
 
             <p class="text-sm text-gray-600"><strong><%= seguidores %></strong> seguidores · <strong><%= siguiendo %></strong> siguiendo</p>
-            <p class="text-sm text-gray-600"><%= usuarioPerfil.instrumento || 'Sin instrumento' %></p>
+            <% if (usuarioPerfil.instrumentos?.length) { %>
+              <p class="text-sm text-gray-600">
+                Instrumentos: <%= usuarioPerfil.instrumentos.join(', ') %>
+              </p>
+            <% } else { %>
+              <p class="text-sm text-gray-600">Sin instrumentos</p>
+            <% } %>
+
+            <% if (usuarioPerfil.generos?.length) { %>
+              <p class="text-sm text-gray-600">
+                Géneros favoritos: <%= usuarioPerfil.generos.join(', ') %>
+              </p>
+            <% } else { %>
+              <p class="text-sm text-gray-600">Sin géneros favoritos</p>
+            <% } %>
             <p class="text-sm text-gray-600"><%= usuarioPerfil.provincia || 'Sin provincia' %></p>
           </div>
         </div>
