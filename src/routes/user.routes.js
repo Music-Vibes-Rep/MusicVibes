@@ -41,5 +41,9 @@ router.get('/privacity', userController.getPrivacidad);
 router.get('/usuario/:id', followController.verPerfilPublico);
 router.post('/usuario/:id/follow', authUser, followController.toggleFollow);
 
+// lista de seguidores o seguidos
+router.get('/usuario/:id/seguidores', followController.getSeguidores);
+router.get('/usuario/:id/seguidos', followController.getSeguidos);
+
 
 module.exports = router;

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title><%= titulo %> | MusicVibe</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-r from-red-600 to-pink-700 text-white min-h-screen pt-24">
+  <%- include('partials/_navbar') %>
+
+  <main class="max-w-3xl mx-auto px-4 py-10">
+    <h1 class="text-2xl font-bold mb-6"><%= titulo %></h1>
+    <% if (usuarios.length === 0) { %>
+      <p class="text-gray-200">No hay usuarios.</p>
+    <% } else { %>
+      <ul class="space-y-4">
+        <% usuarios.forEach(u => { %>
+          <li class="bg-white text-gray-900 rounded-xl shadow p-4 flex items-center space-x-4">
+            <img src="<%= u.foto_perfil || '/assets/img/default-profile.png' %>" class="w-12 h-12 rounded-full object-cover border border-pink-400">
+            <a href="/usuario/<%= u.id_usuario %>" class="font-semibold text-pink-700 hover:underline">
+              <%= u.Nombre %> <%= u.Apellido %>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </main>
+
+  <%- include('partials/_footer') %>
+</body>
+</html>

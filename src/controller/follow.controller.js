@@ -188,3 +188,32 @@ exports.toggleFollow = (req, res) => {
     }
   });
 };
+
+exports.getSeguidores = (req, res) => {
+  const id = req.params.id;
+  const sql = `
+    SELECT u.id_usuario, u.Nombre, u.Apellido, u.foto_perfil
+    FROM Follow f
+    JOIN Usuario u ON f.seguidor = u.id_usuario
+    WHERE f.seguido = ?
+  `;
+  db.query(sql, [id], (err, resultados) => {
+    if (err) return res.render('error', { error: 'Error al obtener seguidores.', redirectFeed: '/' });
+    res.render('seguidores_lista', { usuarios: resultados, titulo: 'Seguidores', usuario: req.session.usuario });
+  });
+};
+
+exports.getSeguidos = (req, res) => {
+  const id = req.params.id;
+  const sql = `
+    SELECT u.id_usuario, u.Nombre, u.Apellido, u.foto_perfil
+    FROM Follow f
+    JOIN Usuario u ON f.seguido = u.id_usuario
+    WHERE f.seguidor = ?
+  `;
+  db.query(sql, [id], (err, resultados) => {
+    if (err) return res.render('error', { error: 'Error al obtener seguidos.', redirectFeed: '/' });
+    res.render('seguidores_lista', { usuarios: resultados, titulo: 'Siguiendo', usuario: req.session.usuario });
+  });
+};
+
