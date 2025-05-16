@@ -75,7 +75,13 @@ exports.getFeed = (req, res) => {
             : false;
         });
 
-        res.render('feed', { publicaciones, usuario: req.session.usuario });
+        res.render('feed', {
+          publicaciones,
+          usuarios: [],
+          usuario: req.session.usuario,
+          tipoQuery: '',
+          qry: ''
+        });
       });
     });
   });

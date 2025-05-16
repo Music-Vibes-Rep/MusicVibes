@@ -46,6 +46,7 @@ app.use('/', require('./routes/user.routes'));
 app.use('/', require('./routes/publicaciones.routes'));
 app.use('/', require('./routes/like.routes'));
 app.use('/', require('./routes/eventos.routes'));
+app.use('/', require('./routes/filtro.routes'));
 app.use(require('./routes/feed.routes'));
 
 app.listen(8081, () => {
