@@ -240,7 +240,7 @@
           });
 
           const data = await res.json();
-          if (res.ok && data && data.nombre_usuario) {
+          if (res.ok && data && data.nombre_usuario && data.foto_perfil) {
             const nuevoComentario = document.createElement('div');
             nuevoComentario.className = "bg-white p-3 rounded-md shadow flex items-start gap-3 border border-gray-200";
             nuevoComentario.innerHTML = `

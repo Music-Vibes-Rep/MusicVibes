@@ -18,11 +18,12 @@ exports.registrarComentario = (req, res) => {
     const id_comentario = result.insertId;
 
     const obtener = `
-      SELECT c.*, u.Nombre AS nombre_usuario
+      SELECT c.*, u.Nombre AS nombre_usuario, u.foto_perfil
       FROM Comentario c
       JOIN Usuario u ON u.id_usuario = c.id_usuario
       WHERE c.id_comentario = ?
     `;
+
 
     db.query(obtener, [id_comentario], (err2, rows) => {
       if (err2 || rows.length === 0) {
